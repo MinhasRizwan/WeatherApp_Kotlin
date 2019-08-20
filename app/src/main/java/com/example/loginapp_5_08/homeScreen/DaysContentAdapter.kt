@@ -1,4 +1,4 @@
-package com.example.loginapp_5_08
+package com.example.loginapp_5_08.homeScreen
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,12 +6,15 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.loginapp_5_08.R
 
-class DaysContentAdapter(private val rows: List<dayRow>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    interface dayRow
-    class weekDaysRow (val dayName:String , val minmaxTemp:String, val imageDay: Int) : dayRow
 
-    class weekDaysViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
+class DaysContentAdapter(private val rows: List<DayRow>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    interface DayRow
+    class WeekDaysRow (val dayName:String , val minmaxTemp:String, val imageDay: Int) :
+        DayRow
+
+    class WeekDaysViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         val todayDay:TextView = itemView.findViewById(R.id.weekDay)
         val rangeTemp:TextView = itemView.findViewById(R.id.rangeTemp)
         val imageOfDay: ImageView = itemView.findViewById(R.id.weekdayImage)
@@ -21,12 +24,12 @@ class DaysContentAdapter(private val rows: List<dayRow>) : RecyclerView.Adapter<
 
     override fun getItemViewType(position: Int): Int =
         when (rows[position]) {
-            is DaysContentAdapter.weekDaysRow -> DaysContentAdapter.TYPE_WEEKDAY
+            is WeekDaysRow -> TYPE_WEEKDAY
             else -> throw IllegalArgumentException()
         }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = when (viewType) {
-        DaysContentAdapter.TYPE_WEEKDAY -> DaysContentAdapter.weekDaysViewHolder(
+        TYPE_WEEKDAY -> WeekDaysViewHolder(
             LayoutInflater.from(parent.context)
                 .inflate(R.layout.week_status, parent, false)
         )
@@ -35,12 +38,12 @@ class DaysContentAdapter(private val rows: List<dayRow>) : RecyclerView.Adapter<
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) =
         when (holder.itemViewType) {
-            DaysContentAdapter.TYPE_WEEKDAY -> onBindWeekDay(holder, rows[position] as DaysContentAdapter.weekDaysRow)
+            TYPE_WEEKDAY -> onBindWeekDay(holder, rows[position] as WeekDaysRow)
             else -> throw IllegalArgumentException()
         }
 
-    private fun onBindWeekDay(holder: RecyclerView.ViewHolder, row: DaysContentAdapter.weekDaysRow) {
-        val dayRow = holder as DaysContentAdapter.weekDaysViewHolder
+    private fun onBindWeekDay(holder: RecyclerView.ViewHolder, row: WeekDaysRow) {
+        val dayRow = holder as WeekDaysViewHolder
         dayRow.todayDay.text = row.dayName
         dayRow.rangeTemp.text = row.minmaxTemp
         dayRow.imageOfDay.setImageResource(row.imageDay)

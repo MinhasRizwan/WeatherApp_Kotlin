@@ -1,4 +1,4 @@
-package com.example.loginapp_5_08
+package com.example.loginapp_5_08.homeScreen
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -7,6 +7,8 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.loginapp_5_08.R
+import com.example.loginapp_5_08.settings.SettingsActivity
 import kotlinx.android.synthetic.main.activity_home_screen.*
 
 class HomeScreen : AppCompatActivity() {
@@ -18,7 +20,7 @@ class HomeScreen : AppCompatActivity() {
         setSupportActionBar(findViewById(R.id.toolbar))
 
         //set adapter
-        recycler_view.adapter = ContentAdapter(getSampleRows(1))
+        recycler_view.adapter = CurrentStatusContentAdapter(getSampleRows(1))
 
         //create layout manager
         recycler_view.layoutManager = LinearLayoutManager(this)
@@ -35,7 +37,7 @@ class HomeScreen : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem) : Boolean {
         return when (item.itemId){
             R.id.setting ->{
-                var clickintent = Intent(this, Settings_Screen::class.java)
+                val clickintent = Intent(this, SettingsActivity::class.java)
                 startActivity(clickintent)
 
                 true
@@ -44,12 +46,19 @@ class HomeScreen : AppCompatActivity() {
         }
     }
 
-    private fun getSampleRows(numSections: Int): List<ContentAdapter.IRow> {
-        val rows = mutableListOf<ContentAdapter.IRow>()
+    private fun getSampleRows(numSections: Int): List<CurrentStatusContentAdapter.IRow> {
+        val rows = mutableListOf<CurrentStatusContentAdapter.IRow>()
         for (i in 1..numSections) {
-            rows.add(ContentAdapter.statusRow("24° C","Lahore","Partly Cloudy", R.drawable.partlysunny))
-            rows.add(ContentAdapter.todayRow())
-            rows.add(ContentAdapter.weekdaysRow())
+            rows.add(
+                CurrentStatusContentAdapter.StatusRow(
+                    "24° C",
+                    "Lahore",
+                    "Partly Cloudy",
+                    R.drawable.partlysunny
+                )
+            )
+            rows.add(CurrentStatusContentAdapter.TodayRow())
+            rows.add(CurrentStatusContentAdapter.WeekdaysRow())
             //rows.add(ContentAdapter.DummyRow("Sunday","11/08/2019"))
         }
         return rows

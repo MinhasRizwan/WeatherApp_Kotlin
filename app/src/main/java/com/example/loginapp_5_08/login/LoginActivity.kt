@@ -1,16 +1,16 @@
-package com.example.loginapp_5_08
+package com.example.loginapp_5_08.login
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.content.SharedPreferences
+import com.example.loginapp_5_08.R
 
-class MainActivity : AppCompatActivity() {
+class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_login)
 
-        val loginFragment = MyFragment()
+        val loginFragment = LoginFragment()
 
         val manager = supportFragmentManager
 

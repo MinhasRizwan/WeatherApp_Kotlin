@@ -10,18 +10,18 @@
             android:supportsRtl="true"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
         <activity
-            android:name=".Settings_Screen"
+            android:name=".settings.SettingsActivity"
             android:label="@string/settings"
         >
         </activity>
-        <activity android:name=".HomeScreen">
+        <activity android:name=".homeScreen.HomeScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity">
+        <activity android:name=".login.LoginActivity">
 
         </activity>
     </application>

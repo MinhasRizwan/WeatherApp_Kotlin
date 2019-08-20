@@ -5,7 +5,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".Settings_Screen">
+        tools:context=".settings.SettingsActivity">
 
     <androidx.appcompat.widget.Toolbar
             android:layout_width="match_parent"
@@ -37,7 +37,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/dropdownScale"
             android:entries="@array/temp_scale"
-            
+
             android:layout_marginEnd="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginStart="8dp"
@@ -65,7 +65,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/buttonTemp"
-            android:onClick="checkStatus"
             android:text="@string/check_temperature"
             android:textSize="20sp"
             android:layout_marginEnd="8dp"

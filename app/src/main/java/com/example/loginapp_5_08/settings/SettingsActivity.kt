@@ -1,34 +1,32 @@
-package com.example.loginapp_5_08
+package com.example.loginapp_5_08.settings
 
-import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.*
-import kotlinx.android.synthetic.main.activity_settings__screen.*
+import com.example.loginapp_5_08.R
+import kotlinx.android.synthetic.main.activity_settings.*
 
-class Settings_Screen : AppCompatActivity(){
+class SettingsActivity : AppCompatActivity(){
 
-    lateinit var sharedPreferences : SharedPreferences
+    private lateinit var sharedPreferences : SharedPreferences
     lateinit var editor : SharedPreferences.Editor
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_settings__screen)
+        setContentView(R.layout.activity_settings)
 
         setSupportActionBar(findViewById(R.id.toolbar))
 
         sharedPreferences =  getSharedPreferences("TEMP_INFO", Context.MODE_PRIVATE)
         editor = sharedPreferences.edit()
-        editor.commit()
+        editor.apply()
 
 
         val myint = sharedPreferences.getInt("temp scale",0)
         val cityChecked : Boolean = sharedPreferences.getBoolean("city",false)
-
-        Toast.makeText(this@Settings_Screen, "Temperature Scaleee:" + myint , Toast.LENGTH_SHORT).show()
 
         if (savedInstanceState != null)
         {
@@ -50,11 +48,11 @@ class Settings_Screen : AppCompatActivity(){
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
             // adapter to the spinner
-            spinner.setAdapter(adapter)
+            spinner.adapter = adapter
         }
 
         dropdownScale.setSelection(myint)
-        checkedTextView.setChecked(cityChecked)
+        checkedTextView.isChecked = cityChecked
 
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
@@ -93,8 +91,4 @@ class Settings_Screen : AppCompatActivity(){
         }
     }
 
-    fun checkStatus(view: View) {
-        //Toast.makeText(this, "Temperature Scale: " + dropdownScale.selectedItem.toString(), Toast.LENGTH_LONG).show()
-        //Toast.makeText(this, "Current City: " + checkedTextView.isChecked.toString(), Toast.LENGTH_LONG).show()
-    }
 }
