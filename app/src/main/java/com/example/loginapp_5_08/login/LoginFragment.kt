@@ -5,34 +5,41 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.loginapp_5_08.homeScreen.HomeScreen
 import com.example.loginapp_5_08.R
 import kotlinx.android.synthetic.main.login_fragment.*
-
 import java.util.regex.Pattern
-
 
 class LoginFragment : Fragment() {
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        retainInstance = true
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
 
         // Inflate the layout for this fragment
-        val view = inflater.inflate(
+        return inflater.inflate(
             R.layout.login_fragment,
             container, false
         )
+    }
 
-        val button: Button = view.findViewById(R.id.button)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         button.setOnClickListener {showDialOk()}
 
-        //val PasswordInputLayout = view.findViewById<TextInputEditText>(R.id.editText2)
-        //PasswordInputLayout.error = "8+ characters and at least one uppercase letter, a number, and a special character (\$, #, !)"
+    }
 
-        return view
+    companion object{
+        fun newInstance() = LoginFragment()
     }
 
     private fun showDialOk(){
@@ -40,28 +47,18 @@ class LoginFragment : Fragment() {
         val email = editText1.editableText.toString()
         val pass = editText2.editableText.toString()
 
-        Toast.makeText(activity, "Logging", Toast.LENGTH_SHORT).show()
-
-        if (isEmailValid(email))
-        {
-            //view.findViewById<EditText>(R.id.editText1).setError( "First name is required!" )
-            if (isValidPassword(pass))
-            {
-                val clickintent = Intent(activity, HomeScreen::class.java)
-                startActivity(clickintent)
-
-                activity?.finish()
-
-            }
-            else
-            {
-                editText2.error = "Invalid Password"
-                //Toast.makeText(activity, " In valid Password", Toast.LENGTH_SHORT).show()
-            }
-        }
-        else
-        {
+        if (!isEmailValid(email)) {
             editText1.error = "Invalid Email"
+        }
+        else if (!isValidPassword(pass)) {
+                editText2.error = "Invalid Password"
+        }
+
+        else {
+            val clickintent = Intent(activity, HomeScreen::class.java)
+            startActivity(clickintent)
+
+            activity?.finish()
         }
     }
 
@@ -73,34 +70,9 @@ class LoginFragment : Fragment() {
 
         var valid = true
 
-        // Password policy check
-
+        //Password policy check
         //Valid Length
-        if (!validLength(str.length))
-        {
-            valid = false
-        }
-
-        //atleast one number
-        if (!validNumber(str))
-        {
-            valid = false
-        }
-
-        //atleast one capital
-        if (!validCapital(str))
-        {
-            valid = false
-        }
-
-        //atleast one small
-        if (!validSmall(str))
-        {
-            valid = false
-        }
-
-        //atleast one special
-        if (!validSpecial(str))
+        if (!validLength(str.length) || !validNumber(str) || !validCapital(str) || !validSmall(str) || !validSpecial(str))
         {
             valid = false
         }

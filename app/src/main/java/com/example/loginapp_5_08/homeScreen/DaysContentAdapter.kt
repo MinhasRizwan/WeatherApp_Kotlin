@@ -7,26 +7,20 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.loginapp_5_08.R
+import kotlinx.android.synthetic.main.week_status.view.*
 
 
-class DaysContentAdapter(private val rows: List<DayRow>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    interface DayRow
-    class WeekDaysRow (val dayName:String , val minmaxTemp:String, val imageDay: Int) :
-        DayRow
+class DaysContentAdapter(private val rows: List<WeekDaysRow>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    class WeekDaysRow (val dayName:String , val minmaxTemp:String, val imageDay: Int)
 
     class WeekDaysViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
-        val todayDay:TextView = itemView.findViewById(R.id.weekDay)
-        val rangeTemp:TextView = itemView.findViewById(R.id.rangeTemp)
-        val imageOfDay: ImageView = itemView.findViewById(R.id.weekdayImage)
+        val todayDay:TextView = itemView.weekDay
+        val rangeTemp:TextView = itemView.rangeTemp
+        val imageOfDay: ImageView = itemView.weekdayImage
     }
 
     override fun getItemCount() = rows.count()
 
-    override fun getItemViewType(position: Int): Int =
-        when (rows[position]) {
-            is WeekDaysRow -> TYPE_WEEKDAY
-            else -> throw IllegalArgumentException()
-        }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = when (viewType) {
         TYPE_WEEKDAY -> WeekDaysViewHolder(
@@ -38,7 +32,7 @@ class DaysContentAdapter(private val rows: List<DayRow>) : RecyclerView.Adapter<
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) =
         when (holder.itemViewType) {
-            TYPE_WEEKDAY -> onBindWeekDay(holder, rows[position] as WeekDaysRow)
+            TYPE_WEEKDAY -> onBindWeekDay(holder, rows[position])
             else -> throw IllegalArgumentException()
         }
 

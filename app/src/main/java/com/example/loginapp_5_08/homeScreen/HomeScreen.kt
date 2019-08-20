@@ -6,10 +6,8 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.loginapp_5_08.R
 import com.example.loginapp_5_08.settings.SettingsActivity
-import kotlinx.android.synthetic.main.activity_home_screen.*
 
 class HomeScreen : AppCompatActivity() {
 
@@ -19,14 +17,25 @@ class HomeScreen : AppCompatActivity() {
 
         setSupportActionBar(findViewById(R.id.toolbar))
 
-        //set adapter
-        recycler_view.adapter = CurrentStatusContentAdapter(getSampleRows(1))
-
-        //create layout manager
-        recycler_view.layoutManager = LinearLayoutManager(this)
-        //recycler_view.layoutManager
-
+        createHomeFragment()
     }
+
+    private fun createHomeFragment(){
+
+        val homeFragment = HomeFragment.newInstance("Hello")
+
+        val manager = supportFragmentManager
+        val fragm = manager.findFragmentById(R.id.rv_fragment_container)
+
+        if (fragm == null)
+        {
+            val transaction = manager.beginTransaction()
+
+            transaction.replace(R.id.rv_fragment_container, homeFragment)
+            transaction.commit()
+        }
+    }
+
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val inflater: MenuInflater = menuInflater
@@ -44,23 +53,5 @@ class HomeScreen : AppCompatActivity() {
             }
             else -> super.onOptionsItemSelected(item)
         }
-    }
-
-    private fun getSampleRows(numSections: Int): List<CurrentStatusContentAdapter.IRow> {
-        val rows = mutableListOf<CurrentStatusContentAdapter.IRow>()
-        for (i in 1..numSections) {
-            rows.add(
-                CurrentStatusContentAdapter.StatusRow(
-                    "24° C",
-                    "Lahore",
-                    "Partly Cloudy",
-                    R.drawable.partlysunny
-                )
-            )
-            rows.add(CurrentStatusContentAdapter.TodayRow())
-            rows.add(CurrentStatusContentAdapter.WeekdaysRow())
-            //rows.add(ContentAdapter.DummyRow("Sunday","11/08/2019"))
-        }
-        return rows
     }
 }

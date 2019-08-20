@@ -10,34 +10,30 @@ import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.loginapp_5_08.R
+import kotlinx.android.synthetic.main.current_status_layout.view.*
+import kotlinx.android.synthetic.main.today_status_layout.view.*
+import kotlinx.android.synthetic.main.weekly_status_layout.view.*
 
-class CurrentStatusContentAdapter(private val rows: List<IRow>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class CurrentStatusContentAdapter(private val rows: List<WeatherReportsRow>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    interface IRow
-    class StatusRow(val cTemp: String, val cCity: String, val cStatus: String, val cImage: Int) :
-        IRow
-    class TodayRow : IRow
-    class WeekdaysRow : IRow
+    interface WeatherReportsRow
+    class StatusRow(val cTemp: String, val cCity: String, val cStatus: String, val cImage: Int) : WeatherReportsRow
+    class TodayRow : WeatherReportsRow
+    class WeekdaysRow : WeatherReportsRow
 
     class StatusViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
-        val currentImage: ImageView = itemView.findViewById(R.id.weatherNowImage)
-
-        val currentTemp: TextView = itemView.findViewById(R.id.currentTempText)
-        val currentCity: TextView = itemView.findViewById(R.id.currentCityText)
-        val currentStatus: TextView = itemView.findViewById(R.id.currentStatusText)
+        val currentImage: ImageView = itemView.weatherNowImage
+        val currentTemp: TextView = itemView.currentTempText
+        val currentCity: TextView = itemView.currentCityText
+        val currentStatus: TextView = itemView.currentStatusText
     }
 
     class TodayViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
-        val hourdayRecyclerView: RecyclerView = itemView.findViewById(R.id.HourslistView)
-        //val todayImage: ImageView = itemView.findViewById(R.id.weatherTodayImage)
-
+        val hourdayRecyclerView: RecyclerView = itemView.HourslistView
     }
 
     class WeekdayViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
-        val weekdayRecyclerView: RecyclerView = itemView.findViewById(R.id.week_nested_rv)
+        val weekdayRecyclerView: RecyclerView = itemView.week_nested_rv
     }
 
     override fun getItemCount() = rows.count()
@@ -56,10 +52,12 @@ class CurrentStatusContentAdapter(private val rows: List<IRow>) : RecyclerView.A
             LayoutInflater.from(parent.context)
                 .inflate(R.layout.current_status_layout, parent, false)
         )
+
         TYPE_TODAY -> TodayViewHolder(
             LayoutInflater.from(parent.context)
                 .inflate(R.layout.today_status_layout, parent, false)
         )
+
         TYPE_WEEKDAYS -> WeekdayViewHolder(
             LayoutInflater.from(parent.context)
                 .inflate(R.layout.weekly_status_layout, parent, false)
@@ -69,7 +67,6 @@ class CurrentStatusContentAdapter(private val rows: List<IRow>) : RecyclerView.A
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) =
         when (holder.itemViewType) {
-
 
             TYPE_STATUS -> onBindStatus(holder, rows[position] as StatusRow)
             TYPE_TODAY -> onBindToday(holder)
@@ -86,7 +83,6 @@ class CurrentStatusContentAdapter(private val rows: List<IRow>) : RecyclerView.A
     }
 
     private fun onBindToday(holder: RecyclerView.ViewHolder) {
-
         (holder as TodayViewHolder).hourdayRecyclerView.adapter =
             HoursContentAdapter(getSampleRowForHou(1))
 
@@ -97,12 +93,7 @@ class CurrentStatusContentAdapter(private val rows: List<IRow>) : RecyclerView.A
     private fun onBindDays(holder: RecyclerView.ViewHolder) {
         (holder as WeekdayViewHolder).weekdayRecyclerView.adapter =
             DaysContentAdapter(getSampleRow(1))
-        //recycler_view.adapter = ContentAdapter(getSampleRows(1))
-
-        //create layout manager
         holder.weekdayRecyclerView.layoutManager = LinearLayoutManager(holder.weekdayRecyclerView.context,LinearLayout.HORIZONTAL, false)
-        //recycler_view.layoutManager = LinearLayoutManager(this)
-
     }
 
     companion object {
@@ -111,8 +102,8 @@ class CurrentStatusContentAdapter(private val rows: List<IRow>) : RecyclerView.A
         private const val TYPE_WEEKDAYS = 2
     }
 
-    private fun getSampleRow(numSections: Int): List<DaysContentAdapter.DayRow> {
-        val rows = mutableListOf<DaysContentAdapter.DayRow>()
+    private fun getSampleRow(numSections: Int): List<DaysContentAdapter.WeekDaysRow> {
+        val rows = mutableListOf<DaysContentAdapter.WeekDaysRow>()
         for (i in 1..numSections) {
             rows.add(
                 DaysContentAdapter.WeekDaysRow(
@@ -170,13 +161,12 @@ class CurrentStatusContentAdapter(private val rows: List<IRow>) : RecyclerView.A
                     R.drawable.sunny
                 )
             )
-
         }
         return rows
     }
 
-    private fun getSampleRowForHou(numSections: Int): List<HoursContentAdapter.HourRow> {
-        val rows = mutableListOf<HoursContentAdapter.HourRow>()
+    private fun getSampleRowForHou(numSections: Int): List<HoursContentAdapter.HoursRow> {
+        val rows = mutableListOf<HoursContentAdapter.HoursRow>()
         for (i in 1..numSections) {
             rows.add(
                 HoursContentAdapter.HoursRow(
@@ -213,10 +203,7 @@ class CurrentStatusContentAdapter(private val rows: List<IRow>) : RecyclerView.A
                     R.drawable.partlysunny
                 )
             )
-            //rows.add(HoursContentAdapter.HoursRow("09 PM","21° C"))
-
         }
         return rows
     }
-
 }

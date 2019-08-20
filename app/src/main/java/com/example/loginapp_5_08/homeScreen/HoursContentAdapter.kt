@@ -7,25 +7,18 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.loginapp_5_08.R
+import kotlinx.android.synthetic.main.hour_status_itemlayout.view.*
 
-class HoursContentAdapter(private val rows: List<HourRow>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    interface HourRow
-    class HoursRow (val time:String , val temp:String, val hourlyImage: Int) :
-        HourRow
+class HoursContentAdapter(private val rows: List<HoursRow>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    class HoursRow (val time:String , val temp:String, val hourlyImage: Int)
 
     class HourDaysViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
-        val timeDay: TextView = itemView.findViewById(R.id.timetv)
-        val timeTemp: TextView = itemView.findViewById(R.id.timetemp)
-        val timeImage: ImageView = itemView.findViewById(R.id.timeImage)
+        val timeDay: TextView = itemView.timetv
+        val timeTemp: TextView = itemView.timetemp
+        val timeImage: ImageView = itemView.timeImage
     }
 
     override fun getItemCount() = rows.count()
-
-    override fun getItemViewType(position: Int): Int =
-        when (rows[position]) {
-            is HoursRow -> TYPE_HOUR
-            else -> throw IllegalArgumentException()
-        }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = when (viewType) {
         TYPE_HOUR -> HourDaysViewHolder(
@@ -37,7 +30,7 @@ class HoursContentAdapter(private val rows: List<HourRow>) : RecyclerView.Adapte
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) =
         when (holder.itemViewType) {
-            TYPE_HOUR -> onBindHourDay(holder, rows[position] as HoursRow)
+            TYPE_HOUR -> onBindHourDay(holder, rows[position])
             else -> throw IllegalArgumentException()
         }
 
