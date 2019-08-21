@@ -3,7 +3,7 @@ package com.example.loginapp_5_08.shared
 import android.content.Context
 import android.content.SharedPreferences
 
-class SharedPreference (val context: Context){
+class SharedPreference (context: Context){
     private val PREFS_NAME = "settings"
     private val sharedPref : SharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 

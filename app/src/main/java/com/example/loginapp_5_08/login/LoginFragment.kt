@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.loginapp_5_08.homeScreen.HomeScreen
 import com.example.loginapp_5_08.R
-import kotlinx.android.synthetic.main.login_fragment.*
+import kotlinx.android.synthetic.main.fragment_login.*
 import java.util.regex.Pattern
 
 class LoginFragment : Fragment() {
@@ -26,7 +26,7 @@ class LoginFragment : Fragment() {
 
         // Inflate the layout for this fragment
         return inflater.inflate(
-            R.layout.login_fragment,
+            R.layout.fragment_login,
             container, false
         )
     }

@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.loginapp_5_08.R
-import kotlinx.android.synthetic.main.home_screen_fragment.*
+import kotlinx.android.synthetic.main.fragment_home_screen.*
 import kotlin.String as String1
 
 class HomeFragment : Fragment() {
@@ -20,7 +20,7 @@ class HomeFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(
-            R.layout.home_screen_fragment,
+            R.layout.fragment_home_screen,
             container, false
         )
     }
@@ -28,39 +28,40 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        recycler_view.adapter = CurrentStatusContentAdapter(getSampleRows(1))
+        val weatherData = WeatherData()
+
+        recycler_view.adapter = CurrentStatusContentAdapter(getSampleRows(1), weatherData)
 
         recycler_view.layoutManager = LinearLayoutManager(this.context)
     }
 
     companion object{
-        private const val inputData = "dummy"
+        //private const val inputData = "dummy"
 
         fun newInstance(input: String1): HomeFragment{
-
             val args = Bundle()
-            args.putSerializable(inputData, input)
+            //args.putSerializable(inputData, input)
 
             val frag = HomeFragment()
-            frag.arguments = args
+            //frag.arguments = args
 
             return frag
         }
     }
 
-    private fun getSampleRows(numSections: Int): List<CurrentStatusContentAdapter.WeatherReportsRow> {
-        val rows = mutableListOf<CurrentStatusContentAdapter.WeatherReportsRow>()
+    private fun getSampleRows(numSections: Int): List<CurrentStatusContentAdapter.WeatherReports> {
+        val rows = mutableListOf<CurrentStatusContentAdapter.WeatherReports>()
         for (i in 1..numSections) {
             rows.add(
-                CurrentStatusContentAdapter.StatusRow(
+                CurrentStatusContentAdapter.WeatherReports.StatusRow(
                     "24° C",
                     "Lahore",
                     "Partly Cloudy",
                     R.drawable.partlysunny
                 )
             )
-            rows.add(CurrentStatusContentAdapter.TodayRow())
-            rows.add(CurrentStatusContentAdapter.WeekdaysRow())
+            rows.add(CurrentStatusContentAdapter.WeatherReports.TodayRow)
+            rows.add(CurrentStatusContentAdapter.WeatherReports.WeekdaysRow)
             //rows.add(ContentAdapter.DummyRow("Sunday","11/08/2019"))
         }
         return rows

@@ -7,10 +7,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.loginapp_5_08.R
-import kotlinx.android.synthetic.main.hour_status_itemlayout.view.*
+import kotlinx.android.synthetic.main.layout_hour_details.view.*
 
 class HoursContentAdapter(private val rows: List<HoursRow>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    class HoursRow (val time:String , val temp:String, val hourlyImage: Int)
 
     class HourDaysViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         val timeDay: TextView = itemView.timetv
@@ -23,7 +22,7 @@ class HoursContentAdapter(private val rows: List<HoursRow>) : RecyclerView.Adapt
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = when (viewType) {
         TYPE_HOUR -> HourDaysViewHolder(
             LayoutInflater.from(parent.context)
-                .inflate(R.layout.hour_status_itemlayout, parent, false)
+                .inflate(R.layout.layout_hour_details, parent, false)
         )
         else -> throw IllegalArgumentException()
     }
@@ -44,4 +43,7 @@ class HoursContentAdapter(private val rows: List<HoursRow>) : RecyclerView.Adapt
     companion object {
         private const val TYPE_HOUR = 0
     }
+
+    class HoursRow (val time:String , val temp:String, val hourlyImage: Int)
+
 }

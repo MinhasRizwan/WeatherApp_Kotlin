@@ -11,6 +11,8 @@ import kotlinx.android.synthetic.main.activity_settings.*
 class SettingsActivity : AppCompatActivity(){
 
     private lateinit var sharedPreference : SharedPreference
+    private var tempUnit : Int = 0
+    private var cityChecked : Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,9 +22,27 @@ class SettingsActivity : AppCompatActivity(){
 
         sharedPreference = SharedPreference(this)
 
-        val myint = sharedPreference.getValueInt("tempScale")
-        val cityChecked : Boolean = sharedPreference.getValueBoolean("currentLocation",false)
+        getSavedValues()
 
+
+        val tempScaleSpinner = setAdapter()
+
+        dropdownScale.setSelection(tempUnit)
+        checkedTextView.isChecked = cityChecked
+
+        tempScaleSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+                sharedPreference.save("tempScale", position)
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {
+
+            }
+        }
+    }
+
+    private fun setAdapter() : Spinner
+    {
         val spinner: Spinner = dropdownScale
 
         ArrayAdapter.createFromResource(
@@ -36,18 +56,13 @@ class SettingsActivity : AppCompatActivity(){
             spinner.adapter = adapter
         }
 
-        dropdownScale.setSelection(myint)
-        checkedTextView.isChecked = cityChecked
+        return spinner
+    }
 
-        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                sharedPreference.save("tempScale", position)
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>) {
-
-            }
-        }
+    private fun getSavedValues()
+    {
+        tempUnit = sharedPreference.getValueInt("tempScale")
+        cityChecked = sharedPreference.getValueBoolean("currentLocation",false)
     }
 
     fun onCheckboxClicked(view: View) {

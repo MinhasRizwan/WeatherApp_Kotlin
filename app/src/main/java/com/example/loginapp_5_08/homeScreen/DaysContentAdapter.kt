@@ -7,11 +7,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.loginapp_5_08.R
-import kotlinx.android.synthetic.main.week_status.view.*
-
+import kotlinx.android.synthetic.main.content_week_details.view.*
 
 class DaysContentAdapter(private val rows: List<WeekDaysRow>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    class WeekDaysRow (val dayName:String , val minmaxTemp:String, val imageDay: Int)
 
     class WeekDaysViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         val todayDay:TextView = itemView.weekDay
@@ -25,7 +23,7 @@ class DaysContentAdapter(private val rows: List<WeekDaysRow>) : RecyclerView.Ada
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = when (viewType) {
         TYPE_WEEKDAY -> WeekDaysViewHolder(
             LayoutInflater.from(parent.context)
-                .inflate(R.layout.week_status, parent, false)
+                .inflate(R.layout.content_week_details, parent, false)
         )
         else -> throw IllegalArgumentException()
     }
@@ -46,4 +44,5 @@ class DaysContentAdapter(private val rows: List<WeekDaysRow>) : RecyclerView.Ada
     companion object {
         private const val TYPE_WEEKDAY = 0
     }
+    class WeekDaysRow (val dayName:String , val minmaxTemp:String, val imageDay: Int)
 }
