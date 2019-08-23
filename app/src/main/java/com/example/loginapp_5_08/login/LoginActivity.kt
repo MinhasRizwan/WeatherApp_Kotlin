@@ -25,11 +25,8 @@ class LoginActivity : AppCompatActivity() {
         if (frag == null)
         {
             val transaction = manager.beginTransaction()
-
             transaction.replace(R.id.fragment_container, loginFragment)
             transaction.commit()
-
         }
     }
-
 }

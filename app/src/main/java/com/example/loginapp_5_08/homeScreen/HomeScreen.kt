@@ -36,7 +36,6 @@ class HomeScreen : AppCompatActivity() {
         }
     }
 
-
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val inflater: MenuInflater = menuInflater
         inflater.inflate(R.menu.tool_menu, menu)

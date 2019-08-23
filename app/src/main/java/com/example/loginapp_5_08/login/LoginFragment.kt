@@ -1,14 +1,17 @@
 package com.example.loginapp_5_08.login
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
 import com.example.loginapp_5_08.homeScreen.HomeScreen
 import com.example.loginapp_5_08.R
 import kotlinx.android.synthetic.main.fragment_login.*
+import kotlinx.android.synthetic.main.layout_current_status.view.*
 import java.util.regex.Pattern
 
 class LoginFragment : Fragment() {
@@ -16,6 +19,7 @@ class LoginFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         retainInstance = true
+
     }
 
     override fun onCreateView(
@@ -34,8 +38,9 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        button.setOnClickListener {showDialOk()}
+        Glide.with(this).load("https://s3.amazonaws.com/appsdeveloperblog/Micky.jpg").into(imageView2)
 
+        button.setOnClickListener {showDialOk()}
     }
 
     companion object{
@@ -55,6 +60,8 @@ class LoginFragment : Fragment() {
         }
 
         else {
+
+
             val clickintent = Intent(activity, HomeScreen::class.java)
             startActivity(clickintent)
 

@@ -62,5 +62,4 @@ class SharedPreference (context: Context){
         editor.remove(KEY_NAME)
         editor.apply()
     }
-
 }

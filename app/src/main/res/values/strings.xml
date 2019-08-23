@@ -23,6 +23,7 @@
     <string name="_02_pm">02 PM</string>
     <string name="fri">Fri</string>
     <string name="_12_c_16_c">12 C - 16 C</string>
+    <string name="api">Api Response Comes Here</string>
     <string-array name="temp_scale">
         <item> C </item>
         <item> F </item>

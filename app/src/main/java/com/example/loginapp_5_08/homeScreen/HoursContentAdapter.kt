@@ -45,5 +45,4 @@ class HoursContentAdapter(private val rows: List<HoursRow>) : RecyclerView.Adapt
     }
 
     class HoursRow (val time:String , val temp:String, val hourlyImage: Int)
-
 }
