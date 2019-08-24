@@ -1,5 +1,6 @@
 package com.example.loginapp_5_08.homeScreen
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,12 +15,15 @@ import kotlinx.android.synthetic.main.content_hour_details.view.*
 import kotlinx.android.synthetic.main.layout_current_status.view.*
 import kotlinx.android.synthetic.main.layout_week_details.view.*
 import com.example.loginapp_5_08.R
+import com.example.loginapp_5_08.data.response.response2.current.CurrentWeatherResponseOWM
+import com.example.loginapp_5_08.data.response.response2.future.FutureWeatherResponseOWM
 
 
 class CurrentStatusContentAdapter(
     private val sampleRows: List<WeatherReports>,
     private val weatherData: WeatherData,
-    private val futureWeatherResponseData: FutureWeatherResponseData,
+    private val futureWeatherResponseData: FutureWeatherResponseOWM,
+    private val currentWeatherResponseOWM: CurrentWeatherResponseOWM,
     private val homeFragment: HomeFragment
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -58,12 +62,12 @@ class CurrentStatusContentAdapter(
 
         TYPE_TODAY -> TodayViewHolder(
             LayoutInflater.from(parent.context)
-                .inflate(com.example.loginapp_5_08.R.layout.content_hour_details, parent, false)
+                .inflate(R.layout.content_hour_details, parent, false)
         )
 
         TYPE_WEEKDAYS -> WeekdayViewHolder(
             LayoutInflater.from(parent.context)
-                .inflate(com.example.loginapp_5_08.R.layout.layout_week_details, parent, false)
+                .inflate(R.layout.layout_week_details, parent, false)
         )
         else -> throw IllegalArgumentException()
     }
@@ -77,19 +81,19 @@ class CurrentStatusContentAdapter(
             else -> throw IllegalArgumentException()
         }
 
+    @SuppressLint("SetTextI18n")
     private fun onBindStatus(holder: RecyclerView.ViewHolder, row: WeatherReports.StatusRow) {
         val rowCurrentStatus = holder as StatusViewHolder
-        rowCurrentStatus.currentTemp.text = row.cTemp
-        rowCurrentStatus.currentCity.text = row.cCity
-        rowCurrentStatus.currentStatus.text = row.cStatus
-        //rowCurrentStatus.currentImage.setImageResource(row.cImage)
-        Glide.with(homeFragment).load("https:"+futureWeatherResponseData.current.condition.icon).into(rowCurrentStatus.currentImage)
+        rowCurrentStatus.currentTemp.text = ((currentWeatherResponseOWM.main.temp) - 273.15).toInt().toString()+ "° C"
+        rowCurrentStatus.currentCity.text = currentWeatherResponseOWM.name
+        rowCurrentStatus.currentStatus.text = currentWeatherResponseOWM.weather[0].description
 
+        Glide.with(homeFragment).load("https://openweathermap.org/img/wn/"+currentWeatherResponseOWM.weather[0].icon+"@2x.png").into(rowCurrentStatus.currentImage)
     }
 
     private fun onBindToday(holder: RecyclerView.ViewHolder) {
         (holder as TodayViewHolder).hourdayRecyclerView.adapter =
-            HoursContentAdapter(weatherData.hoursRows)
+            HoursContentAdapter(weatherData.hoursRows, futureWeatherResponseData, homeFragment)
         holder.hourdayRecyclerView.layoutManager = LinearLayoutManager(holder.hourdayRecyclerView.context,LinearLayout.HORIZONTAL, false)
     }
 
@@ -106,7 +110,7 @@ class CurrentStatusContentAdapter(
     }
 
     sealed class WeatherReports{
-        class StatusRow(val cTemp: String, val cCity: String, val cStatus: String, val cImage: Int) : WeatherReports()
+        object StatusRow : WeatherReports()
         object TodayRow : WeatherReports()
         object WeekdaysRow : WeatherReports()
     }

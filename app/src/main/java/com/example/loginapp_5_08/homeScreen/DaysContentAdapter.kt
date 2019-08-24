@@ -1,7 +1,6 @@
 package com.example.loginapp_5_08.homeScreen
 
-import android.app.Activity
-import android.content.Context
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,11 +9,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.loginapp_5_08.R
-import com.example.loginapp_5_08.data.response.future.FutureWeatherResponseData
+import com.example.loginapp_5_08.data.response.response2.future.FutureWeatherResponseOWM
 import kotlinx.android.synthetic.main.content_week_details.view.*
-import kotlinx.android.synthetic.main.layout_current_status.view.*
 
-class DaysContentAdapter(private val rows: List<WeekDaysRow>, private val futureWeatherResponseData: FutureWeatherResponseData, private val homeFragment: HomeFragment) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class DaysContentAdapter(private val rows: List<WeekDaysRow>, private val futureWeatherResponseData: FutureWeatherResponseOWM, private val homeFragment: HomeFragment) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     class WeekDaysViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         val todayDay:TextView = itemView.weekDay
@@ -39,17 +37,18 @@ class DaysContentAdapter(private val rows: List<WeekDaysRow>, private val future
 
         }
 
+    @SuppressLint("SetTextI18n")
     private fun onBindWeekDay(holder: RecyclerView.ViewHolder, pos: Int) {
         val dayRow = holder as WeekDaysViewHolder
         //dayRow.todayDay.text = row.dayName
 
-        if ((pos+1) <= futureWeatherResponseData.futureWeatherData.forecastday.size) {
-            dayRow.todayDay.text = futureWeatherResponseData.futureWeatherData.forecastday[pos].day.avgtempC.toString()
+        if ((pos+(pos * 7) <= futureWeatherResponseData.list.size)) {
+            dayRow.todayDay.text = futureWeatherResponseData.list[pos+(pos * 7)].dtTxt.substring(6,16)
             //dayRow.rangeTemp.text = row.minmaxTemp
-            dayRow.rangeTemp.text = futureWeatherResponseData.futureWeatherData.forecastday[pos].date.toString()
+            dayRow.rangeTemp.text = (futureWeatherResponseData.list[pos+(pos * 7)].main.tempMax-273.85).toInt().toString() + "° C"
             //dayRow.imageOfDay.setImageResource(R.drawable.sunny)
 
-            Glide.with(homeFragment).load("https:"+futureWeatherResponseData.futureWeatherData.forecastday[pos].day.condition.icon).into(dayRow.imageOfDay)
+            Glide.with(homeFragment).load("https://openweathermap.org/img/wn/"+futureWeatherResponseData.list[pos+(pos * 7)].weather[0].icon+"@2x.png").into(dayRow.imageOfDay)
 
         }
     }
@@ -58,5 +57,5 @@ class DaysContentAdapter(private val rows: List<WeekDaysRow>, private val future
         private const val TYPE_WEEKDAY = 0
     }
 
-    class WeekDaysRow (val dayName:String , val minmaxTemp:String, val imageDay: Int)
+    class WeekDaysRow(s: String, s1: String, sunny: Int)
 }

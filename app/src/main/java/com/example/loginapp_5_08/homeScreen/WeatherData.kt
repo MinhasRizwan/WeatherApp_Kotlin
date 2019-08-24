@@ -45,27 +45,6 @@ class WeatherData {
                     R.drawable.nightcloudy
                 )
             )
-            rows.add(
-                DaysContentAdapter.WeekDaysRow(
-                    "Wed",
-                    "29° C - 32° C",
-                    R.drawable.cloudy
-                )
-            )
-            rows.add(
-                DaysContentAdapter.WeekDaysRow(
-                    "Thu",
-                    "34° C - 39° C",
-                    R.drawable.sunny
-                )
-            )
-            rows.add(
-                DaysContentAdapter.WeekDaysRow(
-                    "Fri",
-                    "38° C - 39° C",
-                    R.drawable.sunny
-                )
-            )
         }
         return rows
     }
