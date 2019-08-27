@@ -10,18 +10,16 @@ import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.loginapp_5_08.data.response.future.FutureWeatherResponseData
 import kotlinx.android.synthetic.main.content_hour_details.view.*
 import kotlinx.android.synthetic.main.layout_current_status.view.*
-import kotlinx.android.synthetic.main.layout_week_details.view.*
 import com.example.loginapp_5_08.R
 import com.example.loginapp_5_08.data.response.response2.current.CurrentWeatherResponseOWM
 import com.example.loginapp_5_08.data.response.response2.future.FutureWeatherResponseOWM
+import kotlinx.android.synthetic.main.content_week_details.view.*
 
 
 class CurrentStatusContentAdapter(
     private val sampleRows: List<WeatherReports>,
-    private val weatherData: WeatherData,
     private val futureWeatherResponseData: FutureWeatherResponseOWM,
     private val currentWeatherResponseOWM: CurrentWeatherResponseOWM,
     private val homeFragment: HomeFragment
@@ -67,7 +65,7 @@ class CurrentStatusContentAdapter(
 
         TYPE_WEEKDAYS -> WeekdayViewHolder(
             LayoutInflater.from(parent.context)
-                .inflate(R.layout.layout_week_details, parent, false)
+                .inflate(R.layout.content_week_details, parent, false)
         )
         else -> throw IllegalArgumentException()
     }
@@ -75,14 +73,14 @@ class CurrentStatusContentAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) =
         when (holder.itemViewType) {
 
-            TYPE_STATUS -> onBindStatus(holder, sampleRows[position] as WeatherReports.StatusRow)
+            TYPE_STATUS -> onBindStatus(holder)
             TYPE_TODAY -> onBindToday(holder)
             TYPE_WEEKDAYS -> onBindDays(holder)
             else -> throw IllegalArgumentException()
         }
 
     @SuppressLint("SetTextI18n")
-    private fun onBindStatus(holder: RecyclerView.ViewHolder, row: WeatherReports.StatusRow) {
+    private fun onBindStatus(holder: RecyclerView.ViewHolder) {
         val rowCurrentStatus = holder as StatusViewHolder
         rowCurrentStatus.currentTemp.text = ((currentWeatherResponseOWM.main.temp) - 273.15).toInt().toString()+ "° C"
         rowCurrentStatus.currentCity.text = currentWeatherResponseOWM.name
@@ -93,13 +91,13 @@ class CurrentStatusContentAdapter(
 
     private fun onBindToday(holder: RecyclerView.ViewHolder) {
         (holder as TodayViewHolder).hourdayRecyclerView.adapter =
-            HoursContentAdapter(weatherData.hoursRows, futureWeatherResponseData, homeFragment)
+            HoursContentAdapter(futureWeatherResponseData, homeFragment)
         holder.hourdayRecyclerView.layoutManager = LinearLayoutManager(holder.hourdayRecyclerView.context,LinearLayout.HORIZONTAL, false)
     }
 
     private fun onBindDays(holder: RecyclerView.ViewHolder) {
         (holder as WeekdayViewHolder).weekdayRecyclerView.adapter =
-            DaysContentAdapter(weatherData.daysRows, futureWeatherResponseData, homeFragment)
+            DaysContentAdapter(futureWeatherResponseData, homeFragment)
         holder.weekdayRecyclerView.layoutManager = LinearLayoutManager(holder.weekdayRecyclerView.context,LinearLayout.HORIZONTAL, false)
     }
 

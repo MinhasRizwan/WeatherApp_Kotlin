@@ -10,9 +10,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.loginapp_5_08.R
 import com.example.loginapp_5_08.data.response.response2.future.FutureWeatherResponseOWM
-import kotlinx.android.synthetic.main.content_week_details.view.*
+import kotlinx.android.synthetic.main.layout_week_details.view.*
 
-class DaysContentAdapter(private val rows: List<WeekDaysRow>, private val futureWeatherResponseData: FutureWeatherResponseOWM, private val homeFragment: HomeFragment) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class DaysContentAdapter(private val futureWeatherResponseData: FutureWeatherResponseOWM, private val homeFragment: HomeFragment) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     class WeekDaysViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         val todayDay:TextView = itemView.weekDay
@@ -20,12 +20,12 @@ class DaysContentAdapter(private val rows: List<WeekDaysRow>, private val future
         val imageOfDay: ImageView = itemView.weekdayImage
     }
 
-    override fun getItemCount() = rows.count()
+    override fun getItemCount() = 5
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = when (viewType) {
         TYPE_WEEKDAY -> WeekDaysViewHolder(
             LayoutInflater.from(parent.context)
-                .inflate(R.layout.content_week_details, parent, false)
+                .inflate(R.layout.layout_week_details, parent, false)
         )
         else -> throw IllegalArgumentException()
     }
@@ -56,6 +56,4 @@ class DaysContentAdapter(private val rows: List<WeekDaysRow>, private val future
     companion object {
         private const val TYPE_WEEKDAY = 0
     }
-
-    class WeekDaysRow(s: String, s1: String, sunny: Int)
 }

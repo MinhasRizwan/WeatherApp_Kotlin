@@ -5,13 +5,8 @@ import android.os.Bundle
 import android.view.View
 import android.widget.*
 import com.example.loginapp_5_08.R
-import com.example.loginapp_5_08.data.ApixuWeatherApiService
 import com.example.loginapp_5_08.shared.SharedPreference
 import kotlinx.android.synthetic.main.activity_settings.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.android.Main
-import kotlinx.coroutines.launch
 
 class SettingsActivity : AppCompatActivity(){
 
@@ -86,13 +81,6 @@ class SettingsActivity : AppCompatActivity(){
     }
 
     fun checkWeatherStatusThoughAPI(view: View){
-        val apiService = ApixuWeatherApiService()
 
-        GlobalScope.launch(Dispatchers.Main) {
-            val currentWeatherResponseData = apiService.getCurrentWeather("London").await()
-            apiResponse.text = "\n Weather Condition : " + currentWeatherResponseData.currentWeatherData.condition.toString() +
-                    "\n Temperature (C) : " + currentWeatherResponseData.currentWeatherData.tempC.toString() +
-                    "\n Last Updated : " + currentWeatherResponseData.currentWeatherData.lastUpdated
-        }
     }
 }

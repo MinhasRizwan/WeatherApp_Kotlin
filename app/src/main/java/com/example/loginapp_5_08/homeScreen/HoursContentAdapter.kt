@@ -12,7 +12,7 @@ import com.example.loginapp_5_08.R
 import com.example.loginapp_5_08.data.response.response2.future.FutureWeatherResponseOWM
 import kotlinx.android.synthetic.main.layout_hour_details.view.*
 
-class HoursContentAdapter(private val rows: List<HoursRow>, private val futureWeatherResponseData: FutureWeatherResponseOWM, private val homeFragment: HomeFragment) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class HoursContentAdapter( private val futureWeatherResponseData: FutureWeatherResponseOWM, private val homeFragment: HomeFragment) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     class HourDaysViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         val timeDay: TextView = itemView.timetv
@@ -20,7 +20,7 @@ class HoursContentAdapter(private val rows: List<HoursRow>, private val futureWe
         val timeImage: ImageView = itemView.timeImage
     }
 
-    override fun getItemCount() = rows.count()
+    override fun getItemCount() = 5
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = when (viewType) {
         TYPE_HOUR -> HourDaysViewHolder(
@@ -48,5 +48,5 @@ class HoursContentAdapter(private val rows: List<HoursRow>, private val futureWe
         private const val TYPE_HOUR = 0
     }
 
-    class HoursRow (val time:String , val temp:String, val hourlyImage: Int)
+    //class HoursRow (val time:String , val temp:String, val hourlyImage: Int)
 }

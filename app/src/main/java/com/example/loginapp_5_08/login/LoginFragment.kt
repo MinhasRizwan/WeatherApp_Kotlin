@@ -1,6 +1,5 @@
 package com.example.loginapp_5_08.login
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,7 +10,6 @@ import com.bumptech.glide.Glide
 import com.example.loginapp_5_08.homeScreen.HomeScreen
 import com.example.loginapp_5_08.R
 import kotlinx.android.synthetic.main.fragment_login.*
-import kotlinx.android.synthetic.main.layout_current_status.view.*
 import java.util.regex.Pattern
 
 class LoginFragment : Fragment() {
