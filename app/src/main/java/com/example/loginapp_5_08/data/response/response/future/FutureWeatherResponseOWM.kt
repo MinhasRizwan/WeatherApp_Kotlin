@@ -1,4 +1,4 @@
-package com.example.loginapp_5_08.data.response.response2.future
+package com.example.loginapp_5_08.data.response.response.future
 
 data class FutureWeatherResponseOWM(
     val city: City,

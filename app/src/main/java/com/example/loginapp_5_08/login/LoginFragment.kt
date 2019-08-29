@@ -1,22 +1,40 @@
 package com.example.loginapp_5_08.login
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import com.bumptech.glide.Glide
 import com.example.loginapp_5_08.homeScreen.HomeScreen
 import com.example.loginapp_5_08.R
+import com.example.loginapp_5_08.databinding.ActivityMainBinding
 import kotlinx.android.synthetic.main.fragment_login.*
 import java.util.regex.Pattern
 
-class LoginFragment : Fragment() {
+class LoginFragment : Fragment(),LoginResultCallback {
+    override fun onSeccess(message: String) {
+        Toast.makeText(context,message,Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onFailure(message: String) {
+        Toast.makeText(context,message,Toast.LENGTH_SHORT).show()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         retainInstance = true
+
+        val activityMainBinding = DataBindingUtil.setContentView<ActivityMainBinding>(Activity(), R.layout.fragment_login)
+
+        activityMainBinding.viewModel = ViewModelProviders.of(this, LoginViewModelFactory(this))
+            .get(LoginViewModel::class.java)
 
     }
 
@@ -38,7 +56,7 @@ class LoginFragment : Fragment() {
 
         Glide.with(this).load("https://s3.amazonaws.com/appsdeveloperblog/Micky.jpg").into(imageView2)
 
-        button.setOnClickListener {showDialOk()}
+        //button.setOnClickListener {showDialOk()}
     }
 
     companion object{
@@ -46,6 +64,7 @@ class LoginFragment : Fragment() {
     }
 
     private fun showDialOk(){
+
 
         val email = editText1.editableText.toString()
         val pass = editText2.editableText.toString()

@@ -9,7 +9,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.loginapp_5_08.R
-import com.example.loginapp_5_08.data.response.response2.future.FutureWeatherResponseOWM
+import com.example.loginapp_5_08.data.response.response.future.FutureWeatherResponseOWM
 import kotlinx.android.synthetic.main.layout_hour_details.view.*
 
 class HoursContentAdapter( private val futureWeatherResponseData: FutureWeatherResponseOWM, private val homeFragment: HomeFragment) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {

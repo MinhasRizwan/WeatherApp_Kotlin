@@ -1,11 +1,14 @@
 package com.example.loginapp_5_08.homeScreen
 
+import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import android.widget.Toast
+import androidx.lifecycle.ViewModelProvider
 import com.example.loginapp_5_08.R
 import com.example.loginapp_5_08.settings.SettingsActivity
 

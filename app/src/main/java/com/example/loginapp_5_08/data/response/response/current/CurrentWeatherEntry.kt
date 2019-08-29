@@ -1,9 +1,10 @@
-package com.example.loginapp_5_08.data.response.response2.current
+package com.example.loginapp_5_08.data.response.response.current
 
-
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
-data class Main(
+class CurrentWeatherEntry(
     val humidity: Int,
     val pressure: Int,
     val temp: Double,

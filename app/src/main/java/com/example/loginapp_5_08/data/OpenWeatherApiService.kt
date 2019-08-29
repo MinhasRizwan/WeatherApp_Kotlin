@@ -1,11 +1,13 @@
 package com.example.loginapp_5_08.data
 
-import com.example.loginapp_5_08.data.response.response2.current.CurrentWeatherResponseOWM
-import com.example.loginapp_5_08.data.response.response2.future.FutureWeatherResponseOWM
+import androidx.lifecycle.MutableLiveData
+import com.example.loginapp_5_08.data.response.response.current.CurrentWeatherResponseOWM
+import com.example.loginapp_5_08.data.response.response.future.FutureWeatherResponseOWM
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import kotlinx.coroutines.Deferred
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
@@ -23,7 +25,15 @@ interface OpenWeatherApiService {
     fun getCurrentWeather(
         @Query("q") location: String,
         @Query("lang") languageCode: String = "en"
+    ) : Call<CurrentWeatherResponseOWM>
+    //Deferred<CurrentWeatherResponseOWM>
+
+    @GET("weather")
+    fun getCurrenttWeather(
+        @Query("q") location: String,
+        @Query("lang") languageCode: String = "en"
     ) : Deferred<CurrentWeatherResponseOWM>
+
 
     @GET("forecast")
     fun getWeekWeather(
@@ -31,6 +41,13 @@ interface OpenWeatherApiService {
         @Query("lang") languageCode: String = "en"
         //@Query("days") days:Int = 7
     ) : Deferred<FutureWeatherResponseOWM>
+
+    @GET("forecast")
+    fun getFutureWeather(
+        @Query("q") location: String,
+        @Query("lang") languageCode: String = "en"
+        //@Query("days") days:Int = 7
+    ) : Call<FutureWeatherResponseOWM>
 
 
     companion object{

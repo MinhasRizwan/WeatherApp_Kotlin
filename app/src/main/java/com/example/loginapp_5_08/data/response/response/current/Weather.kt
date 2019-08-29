@@ -1,4 +1,4 @@
-package com.example.loginapp_5_08.data.response.response2.current
+package com.example.loginapp_5_08.data.response.response.current
 
 data class Weather(
     val description: String,
