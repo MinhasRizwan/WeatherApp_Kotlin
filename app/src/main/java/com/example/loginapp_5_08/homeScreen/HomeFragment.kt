@@ -8,69 +8,40 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.loginapp_5_08.R
-import com.example.loginapp_5_08.data.OpenWeatherApiService
-import com.example.loginapp_5_08.data.response.response.current.CurrentWeatherResponseOWM
 import com.example.loginapp_5_08.data.response.response.future.FutureWeatherResponseOWM
 import kotlinx.android.synthetic.main.fragment_home_screen.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import com.example.loginapp_5_08.data.WeatherViewModel
 import androidx.lifecycle.ViewModelProviders
 
 
 class HomeFragment : Fragment() {
 
-    lateinit var weatherViewModel: WeatherViewModel
+    private lateinit var weatherViewModel: WeatherViewModel
 
     private lateinit var futureWeatherResponseOWM: FutureWeatherResponseOWM
-
-    private lateinit var currentWeatherResponseOWM: CurrentWeatherResponseOWM
-
-    private lateinit var currentWeatherObserver: Observer<CurrentWeatherResponseOWM>
 
     private lateinit var futureWeatherObserver: Observer<FutureWeatherResponseOWM>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         retainInstance = true
-
-
-
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-
-
         weatherViewModel = ViewModelProviders.of(this).get(WeatherViewModel::class.java)
         weatherViewModel.init()
 
-        // Create the observer which updates the UI.
-        currentWeatherObserver = Observer<CurrentWeatherResponseOWM> { newWeather ->
+        futureWeatherObserver = Observer { newWeather ->
             // Update the UI
-            currentWeatherResponseOWM = newWeather
-        }
+            futureWeatherResponseOWM = newWeather
 
-        futureWeatherObserver = Observer<FutureWeatherResponseOWM> { newwWeather ->
-            // Update the UI
-            futureWeatherResponseOWM = newwWeather
-        }
-
-        weatherViewModel.getCurrentWeatherRepository()!!.observe(this, currentWeatherObserver)
-        //weatherViewModel.getFutureWeatherRepository()!!.observe(this, futureWeatherObserver)
-
-
-        val apiServiceOWM = OpenWeatherApiService()
-
-        GlobalScope.launch(Dispatchers.Main) {
-
-            futureWeatherResponseOWM = apiServiceOWM.getWeekWeather("London,uk").await()
-
-            recycler_view.adapter = CurrentStatusContentAdapter(getSampleRows(1) , futureWeatherResponseOWM, currentWeatherResponseOWM, this@HomeFragment)
+            recycler_view.adapter = CurrentStatusContentAdapter(getSampleRows(1) , futureWeatherResponseOWM, this@HomeFragment)
 
             recycler_view.layoutManager = LinearLayoutManager(this@HomeFragment.context)
 
         }
+
+        weatherViewModel.getFutureWeatherRepository()!!.observe(this, futureWeatherObserver)
 
         // Inflate the layout for this fragment
         return inflater.inflate(

@@ -1,14 +1,19 @@
 package com.example.loginapp_5_08.data
 
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.*
 import com.example.loginapp_5_08.data.response.response.current.CurrentWeatherResponseOWM
 import com.example.loginapp_5_08.data.response.response.future.FutureWeatherResponseOWM
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import kotlin.coroutines.coroutineContext
 
 
-class WeatherRepository {
+class WeatherRepository : LifecycleOwner {
+
+    override fun getLifecycle(): Lifecycle {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
     private var openWeatherApiService = OpenWeatherApiService()
 
@@ -65,4 +70,7 @@ class WeatherRepository {
         })
         return futureData
     }
+
+
+
 }

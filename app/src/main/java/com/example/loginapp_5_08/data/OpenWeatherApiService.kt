@@ -28,20 +28,6 @@ interface OpenWeatherApiService {
     ) : Call<CurrentWeatherResponseOWM>
     //Deferred<CurrentWeatherResponseOWM>
 
-    @GET("weather")
-    fun getCurrenttWeather(
-        @Query("q") location: String,
-        @Query("lang") languageCode: String = "en"
-    ) : Deferred<CurrentWeatherResponseOWM>
-
-
-    @GET("forecast")
-    fun getWeekWeather(
-        @Query("q") location: String,
-        @Query("lang") languageCode: String = "en"
-        //@Query("days") days:Int = 7
-    ) : Deferred<FutureWeatherResponseOWM>
-
     @GET("forecast")
     fun getFutureWeather(
         @Query("q") location: String,

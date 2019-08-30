@@ -21,7 +21,6 @@ import kotlinx.android.synthetic.main.content_week_details.view.*
 class CurrentStatusContentAdapter(
     private val sampleRows: List<WeatherReports>,
     private val futureWeatherResponseData: FutureWeatherResponseOWM,
-    private val currentWeatherResponseOWM: CurrentWeatherResponseOWM,
     private val homeFragment: HomeFragment
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -82,11 +81,11 @@ class CurrentStatusContentAdapter(
     @SuppressLint("SetTextI18n")
     private fun onBindStatus(holder: RecyclerView.ViewHolder) {
         val rowCurrentStatus = holder as StatusViewHolder
-        rowCurrentStatus.currentTemp.text = ((currentWeatherResponseOWM.currentWeatherEntry.temp) - 273.15).toInt().toString()+ "° C"
-        rowCurrentStatus.currentCity.text = currentWeatherResponseOWM.name
-        rowCurrentStatus.currentStatus.text = currentWeatherResponseOWM.weather[0].description
+        rowCurrentStatus.currentTemp.text = ((futureWeatherResponseData.list[0].main.temp) - 273.15).toInt().toString()+ "° C"
+        rowCurrentStatus.currentCity.text = futureWeatherResponseData.city.name
+        rowCurrentStatus.currentStatus.text = futureWeatherResponseData.list[0].weather[0].description
 
-        Glide.with(homeFragment).load("https://openweathermap.org/img/wn/"+currentWeatherResponseOWM.weather[0].icon+"@2x.png").into(rowCurrentStatus.currentImage)
+        Glide.with(homeFragment).load("https://openweathermap.org/img/wn/"+futureWeatherResponseData.list[0].weather[0].icon+"@2x.png").into(rowCurrentStatus.currentImage)
     }
 
     private fun onBindToday(holder: RecyclerView.ViewHolder) {

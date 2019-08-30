@@ -4,10 +4,11 @@ import androidx.lifecycle.*
 import com.example.loginapp_5_08.Weather
 import com.example.loginapp_5_08.data.response.response.current.CurrentWeatherResponseOWM
 import com.example.loginapp_5_08.data.response.response.future.FutureWeatherResponseOWM
-import com.example.loginapp_5_08.homeScreen.HomeFragment
 
-
-class WeatherViewModel : ViewModel(){
+class WeatherViewModel : ViewModel(), LifecycleOwner {
+    override fun getLifecycle(): Lifecycle {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
     private var mutableCuurrentLiveData: MutableLiveData<CurrentWeatherResponseOWM>? = null
     private var mutableFutureLiveData: MutableLiveData<FutureWeatherResponseOWM>? = null
@@ -32,4 +33,5 @@ class WeatherViewModel : ViewModel(){
     fun getFutureWeatherRepository(): LiveData<FutureWeatherResponseOWM>? {
         return mutableFutureLiveData
     }
+
 }
