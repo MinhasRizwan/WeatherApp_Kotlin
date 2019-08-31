@@ -1,5 +1,6 @@
 package com.example.loginapp_5_08.shared
 
+import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 

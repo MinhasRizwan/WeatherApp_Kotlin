@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 
 class WeatherRepo {
 
-    lateinit private var openWeatherApiService: OpenWeatherApiService
+    private lateinit var openWeatherApiService: OpenWeatherApiService
     lateinit var currentWeatherResponseOWM: CurrentWeatherResponseOWM
     // ...
 

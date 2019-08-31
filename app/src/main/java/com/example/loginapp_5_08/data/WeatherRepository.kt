@@ -38,13 +38,13 @@ class WeatherRepository : LifecycleOwner {
                 call: Call<CurrentWeatherResponseOWM>,
                 response: Response<CurrentWeatherResponseOWM>
             ) {
-                if (response.isSuccessful()) {
-                    currentData.setValue(response.body())
+                if (response.isSuccessful) {
+                    currentData.value = response.body()
                 }
             }
 
             override fun onFailure(call: Call<CurrentWeatherResponseOWM>, t: Throwable) {
-                currentData.setValue(null)
+                currentData.value = null
             }
         })
         return currentData
@@ -59,13 +59,13 @@ class WeatherRepository : LifecycleOwner {
                 call: Call<FutureWeatherResponseOWM>,
                 response: Response<FutureWeatherResponseOWM>
             ) {
-                if (response.isSuccessful()) {
-                    futureData.setValue(response.body())
+                if (response.isSuccessful) {
+                    futureData.value = response.body()
                 }
             }
 
             override fun onFailure(call: Call<FutureWeatherResponseOWM>, t: Throwable) {
-                futureData.setValue(null)
+                futureData.value = null
             }
         })
         return futureData

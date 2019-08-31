@@ -92,7 +92,7 @@ class CurrentStatusContentAdapter(
         (holder as TodayViewHolder).hourdayRecyclerView.adapter =
             HoursContentAdapter(futureWeatherResponseData, homeFragment)
         holder.hourdayRecyclerView.layoutManager =
-            LinearLayoutManager(holder.hourdayRecyclerView.context,LinearLayout.HORIZONTAL, false) as RecyclerView.LayoutManager?
+            LinearLayoutManager(holder.hourdayRecyclerView.context,LinearLayout.HORIZONTAL, false)
     }
 
     private fun onBindDays(holder: RecyclerView.ViewHolder) {

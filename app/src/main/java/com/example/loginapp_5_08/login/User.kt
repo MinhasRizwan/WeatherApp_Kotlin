@@ -9,23 +9,23 @@ class User(private var email:String, private var password:String) : BaseObservab
     get() = (isEmailValid(getEmail()) && isValidPassword(getPassword()))
 
 
-    public fun setEmail(ema :String)
+    fun setEmail(ema :String)
     {
         this.email = ema
     }
 
-    public fun setPassword(pass :String)
+    fun setPassword(pass :String)
     {
         this.password = pass
     }
 
 
-    public fun getEmail():String
+    fun getEmail():String
     {
         return email
     }
 
-    public fun getPassword():String
+    fun getPassword():String
     {
         return password
     }
