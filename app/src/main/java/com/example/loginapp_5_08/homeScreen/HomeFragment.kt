@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -12,9 +13,12 @@ import com.example.loginapp_5_08.data.response.response.future.FutureWeatherResp
 import kotlinx.android.synthetic.main.fragment_home_screen.*
 import com.example.loginapp_5_08.data.WeatherViewModel
 import androidx.lifecycle.ViewModelProviders
+import androidx.viewpager.widget.ViewPager
+import com.example.loginapp_5_08.ViewPager.Cities
+import com.example.loginapp_5_08.ViewPager.CityHelper
 
 
-class HomeFragment : Fragment() {
+class HomeFragment (private val arraySize:Int): Fragment() {
 
     private lateinit var weatherViewModel: WeatherViewModel
 
@@ -30,6 +34,8 @@ class HomeFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         weatherViewModel = ViewModelProviders.of(this).get(WeatherViewModel::class.java)
         weatherViewModel.init()
+
+        Toast.makeText(activity,arraySize.toString(), Toast.LENGTH_SHORT).show()
 
         futureWeatherObserver = Observer { newWeather ->
             // Update the UI
@@ -53,11 +59,12 @@ class HomeFragment : Fragment() {
     companion object{
         //private const val inputData = "dummy"
 
-        fun newInstance(input: String): HomeFragment{
+        //fun newInstance(movie: Cities): HomeFragment{
+        fun newInstance(str : String , size:Int): HomeFragment{
             //val args = Bundle()
             //args.putSerializable(inputData, input)
 
-            val frag = HomeFragment()
+            val frag = HomeFragment(size)
             //frag.arguments = args
 
             return frag

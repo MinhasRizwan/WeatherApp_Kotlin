@@ -53,7 +53,7 @@ class WeatherRepository : LifecycleOwner {
 
     fun getFutureWeather(): MutableLiveData<FutureWeatherResponseOWM>{
         val futureData = MutableLiveData<FutureWeatherResponseOWM>()
-        openWeatherApiService.getFutureWeather("London,uk").enqueue(object : Callback<FutureWeatherResponseOWM> {
+        openWeatherApiService.getFutureWeather("London").enqueue(object : Callback<FutureWeatherResponseOWM> {
 
             override fun onResponse(
                 call: Call<FutureWeatherResponseOWM>,

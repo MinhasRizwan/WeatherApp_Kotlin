@@ -8,15 +8,18 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.example.loginapp_5_08.R
 import com.example.loginapp_5_08.settings.Database.UserPref
+import com.example.loginapp_5_08.settings.manageCities.ManageCityDialogFragment
 import com.example.loginapp_5_08.settings.vewModel.UserPrefViewModel
+import com.example.loginapp_5_08.shared.SharedPreference
 import kotlinx.android.synthetic.main.activity_settings.*
 
 class SettingsActivity : AppCompatActivity(){
 
     private var tempUnit : Int = 0
     private var cityChecked : Boolean = false
-    private lateinit var userPrefViewModel: UserPrefViewModel
-    private lateinit var prefObserver: Observer<UserPref>
+    //private lateinit var userPrefViewModel: UserPrefViewModel
+    //private lateinit var prefObserver: Observer<UserPref>
+    private lateinit var sharedPreference: SharedPreference
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,8 +29,17 @@ class SettingsActivity : AppCompatActivity(){
         setSupportActionBar(findViewById(R.id.toolbar))
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        sharedPreference = SharedPreference(this)
+
+        getSavedValues()
+
         val tempScaleSpinner = setAdapter()
 
+        dropdownScale.setSelection(tempUnit)
+        checkedTextView.isChecked = cityChecked
+
+        /*
         // Get a new or existing ViewModel from the ViewModelProvider.
         userPrefViewModel = ViewModelProviders.of(this).get(UserPrefViewModel::class.java)
 
@@ -38,6 +50,8 @@ class SettingsActivity : AppCompatActivity(){
 
         }
 
+        dropdownScale.setSelection(tempUnit)
+        checkedTextView.isChecked = cityChecked
 
 
         // Add an observer on the LiveData returned by getAlphabetizedWords.
@@ -47,20 +61,15 @@ class SettingsActivity : AppCompatActivity(){
 
         dropdownScale.setSelection(tempUnit)
         checkedTextView.isChecked = cityChecked
-
+        */
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-
-        //getSavedValues()
-
-
-
         tempScaleSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                //sharedPreference.save("tempScale", position)
-                userPrefViewModel.insertPref(position,cityChecked)
+                sharedPreference.save("tempScale", position)
+                //userPrefViewModel.insertPref(position,cityChecked)
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {
@@ -90,12 +99,12 @@ class SettingsActivity : AppCompatActivity(){
         return spinner
     }
 
-/*    private fun getSavedValues()
+    private fun getSavedValues()
     {
         tempUnit = sharedPreference.getValueInt("tempScale")
         cityChecked = sharedPreference.getValueBoolean("currentLocation",false)
     }
-*/
+
     fun onCheckboxClicked(view: View) {
         if (view is CheckBox) {
             val checked: Boolean = view.isChecked
@@ -103,17 +112,21 @@ class SettingsActivity : AppCompatActivity(){
             when (view.id) {
                 R.id.checkedTextView -> {
                     if (checked) {
-                        userPrefViewModel.insertPref(tempUnit,true)
-                        //sharedPreference.save("currentLocation",true)
+                        //userPrefViewModel.insertPref(tempUnit,true)
+                        sharedPreference.save("currentLocation",true)
                     } else {
-                        //sharedPreference.save("currentLocation", false)
+                        sharedPreference.save("currentLocation", false)
                     }
                 }
             }
         }
     }
 
-    fun checkWeatherStatusThoughAPI(view: View){
+    fun manageCities(view: View){
+
+        val ft = getSupportFragmentManager().beginTransaction()
+        val newFragment = ManageCityDialogFragment.newInstance("pass content here",sharedPreference)
+        newFragment.show(ft, "dialog")
 
     }
 }

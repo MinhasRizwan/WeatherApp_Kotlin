@@ -3,9 +3,14 @@ package com.example.loginapp_5_08.shared
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
+import com.google.gson.Gson
+import android.preference.PreferenceManager
+import com.google.gson.reflect.TypeToken
+
 
 class SharedPreference (context: Context){
     private val PREFS_NAME = "settings"
+    //private var addedCities  =ArrayList<String>()
     private val sharedPref : SharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
     //to store Int data
@@ -15,6 +20,12 @@ class SharedPreference (context: Context){
 
         editor.putInt(KEY_NAME, value)
         editor.apply()
+    }
+
+    //to store list of cities
+    fun saveCity(KEY_NAME : String , value : String)
+    {
+
     }
 
     //to store String data
@@ -62,5 +73,23 @@ class SharedPreference (context: Context){
 
         editor.remove(KEY_NAME)
         editor.apply()
+    }
+
+    fun saveArrayList( key: String, list: ArrayList<String>) {
+        //val prefs = PreferenceManager.getDefaultSharedPreferences(activity)
+        val editor = sharedPref.edit()
+        val gson = Gson()
+        val json = gson.toJson(list)
+        editor.putString(key, json)
+        editor.apply()     // This line is IMPORTANT !!!
+    }
+
+    fun getArrayList(key: String): ArrayList<String> {
+        val gson = Gson()
+        val json = sharedPref.getString(key, null)
+        val type = object : TypeToken<ArrayList<String>>() {
+
+        }.getType()
+        return gson.fromJson<ArrayList<String>>(json, type)
     }
 }

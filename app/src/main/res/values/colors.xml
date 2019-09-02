@@ -7,4 +7,5 @@
     <color name="white">#FFFFFF</color>
     <color name="editTextColor">#ffff25e6</color>
     <color name="currentStatusColor">#04FFE2</color>
+    <color name="manageCitiesColor">#03776D</color>
 </resources>
