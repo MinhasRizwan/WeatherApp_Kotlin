@@ -1,4 +1,4 @@
-package com.example.loginapp_5_08.data.response.response.current
+package com.example.loginapp_5_08.homeScreen.openWeatherApi.response.current
 
 import com.google.gson.annotations.SerializedName
 

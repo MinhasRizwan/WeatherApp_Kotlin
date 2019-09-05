@@ -9,10 +9,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.loginapp_5_08.R
-import com.example.loginapp_5_08.data.response.response.future.FutureWeatherResponseOWM
+import com.example.loginapp_5_08.homeScreen.openWeatherApi.response.future.FutureWeatherResponseOWM
 import kotlinx.android.synthetic.main.layout_week_details.view.*
 
-class DaysContentAdapter(private val futureWeatherResponseData: FutureWeatherResponseOWM, private val homeFragment: HomeFragment) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class DaysContentAdapter(private val futureWeatherResponseData: FutureWeatherResponseOWM, private val homeFragment: HomeFragment, private val tempScale:Int) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     class WeekDaysViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         val todayDay:TextView = itemView.weekDay
@@ -45,8 +45,13 @@ class DaysContentAdapter(private val futureWeatherResponseData: FutureWeatherRes
         if ((pos+(pos * 7) <= futureWeatherResponseData.list.size)) {
             dayRow.todayDay.text = futureWeatherResponseData.list[pos+(pos * 7)].dtTxt.substring(6,16)
             //dayRow.rangeTemp.text = row.minmaxTemp
-            dayRow.rangeTemp.text = (futureWeatherResponseData.list[pos+(pos * 7)].main.tempMax-273.85).toInt().toString() + "° C"
-            //dayRow.imageOfDay.setImageResource(R.drawable.sunny)
+            if (tempScale==0){
+                dayRow.rangeTemp.text = (futureWeatherResponseData.list[pos+(pos * 7)].main.tempMax-273.85).toInt().toString() + "° C"
+            }
+            else{
+                //1.8*((futureWeatherResponseData.list[0].main.temp) - 273.15) + 32
+                dayRow.rangeTemp.text = (1.8*(futureWeatherResponseData.list[pos+(pos * 7)].main.tempMax-273.85)+ 32) .toInt().toString() + "° F"
+            }
 
             Glide.with(homeFragment).load("https://openweathermap.org/img/wn/"+futureWeatherResponseData.list[pos+(pos * 7)].weather[0].icon+"@2x.png").into(dayRow.imageOfDay)
 

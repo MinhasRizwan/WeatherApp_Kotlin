@@ -13,15 +13,15 @@ import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.content_hour_details.view.*
 import kotlinx.android.synthetic.main.layout_current_status.view.*
 import com.example.loginapp_5_08.R
-import com.example.loginapp_5_08.data.response.response.current.CurrentWeatherResponseOWM
-import com.example.loginapp_5_08.data.response.response.future.FutureWeatherResponseOWM
+import com.example.loginapp_5_08.homeScreen.openWeatherApi.response.future.FutureWeatherResponseOWM
 import kotlinx.android.synthetic.main.content_week_details.view.*
 
 
 class CurrentStatusContentAdapter(
     private val sampleRows: List<WeatherReports>,
     private val futureWeatherResponseData: FutureWeatherResponseOWM,
-    private val homeFragment: HomeFragment
+    private val homeFragment: HomeFragment,
+    private val tempScale:Int
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
 
@@ -81,7 +81,13 @@ class CurrentStatusContentAdapter(
     @SuppressLint("SetTextI18n")
     private fun onBindStatus(holder: RecyclerView.ViewHolder) {
         val rowCurrentStatus = holder as StatusViewHolder
-        rowCurrentStatus.currentTemp.text = ((futureWeatherResponseData.list[0].main.temp) - 273.15).toInt().toString()+ "° C"
+        if (tempScale == 0)
+        {
+            rowCurrentStatus.currentTemp.text = ((futureWeatherResponseData.list[0].main.temp) - 273.15).toInt().toString()+ "° C"
+        }
+        else{
+            rowCurrentStatus.currentTemp.text = (1.8*((futureWeatherResponseData.list[0].main.temp) - 273.15) + 32).toInt().toString()+ "° F"
+        }
         rowCurrentStatus.currentCity.text = futureWeatherResponseData.city.name
         rowCurrentStatus.currentStatus.text = futureWeatherResponseData.list[0].weather[0].description
 
@@ -90,14 +96,14 @@ class CurrentStatusContentAdapter(
 
     private fun onBindToday(holder: RecyclerView.ViewHolder) {
         (holder as TodayViewHolder).hourdayRecyclerView.adapter =
-            HoursContentAdapter(futureWeatherResponseData, homeFragment)
+            HoursContentAdapter(futureWeatherResponseData, homeFragment, tempScale)
         holder.hourdayRecyclerView.layoutManager =
             LinearLayoutManager(holder.hourdayRecyclerView.context,LinearLayout.HORIZONTAL, false)
     }
 
     private fun onBindDays(holder: RecyclerView.ViewHolder) {
         (holder as WeekdayViewHolder).weekdayRecyclerView.adapter =
-            DaysContentAdapter(futureWeatherResponseData, homeFragment)
+            DaysContentAdapter(futureWeatherResponseData, homeFragment, tempScale)
         holder.weekdayRecyclerView.layoutManager = LinearLayoutManager(holder.weekdayRecyclerView.context,LinearLayout.HORIZONTAL, false)
     }
 

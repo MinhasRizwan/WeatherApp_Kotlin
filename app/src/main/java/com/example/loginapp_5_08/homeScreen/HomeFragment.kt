@@ -9,21 +9,17 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.loginapp_5_08.R
-import com.example.loginapp_5_08.data.response.response.future.FutureWeatherResponseOWM
+import com.example.loginapp_5_08.homeScreen.openWeatherApi.response.future.FutureWeatherResponseOWM
 import kotlinx.android.synthetic.main.fragment_home_screen.*
-import com.example.loginapp_5_08.data.WeatherViewModel
+import com.example.loginapp_5_08.homeScreen.viewModels.WeatherViewModel
 import androidx.lifecycle.ViewModelProviders
-import androidx.viewpager.widget.ViewPager
-import com.example.loginapp_5_08.ViewPager.Cities
-import com.example.loginapp_5_08.ViewPager.CityHelper
+import com.example.loginapp_5_08.shared.SharedPreference
 
 
-class HomeFragment (private val arraySize:Int): Fragment() {
+class HomeFragment ( private val city:String, private val lati: Double, private val longi: Double, private val sharedPreference: SharedPreference): Fragment() {
 
     private lateinit var weatherViewModel: WeatherViewModel
-
     private lateinit var futureWeatherResponseOWM: FutureWeatherResponseOWM
-
     private lateinit var futureWeatherObserver: Observer<FutureWeatherResponseOWM>
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,18 +29,19 @@ class HomeFragment (private val arraySize:Int): Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         weatherViewModel = ViewModelProviders.of(this).get(WeatherViewModel::class.java)
-        weatherViewModel.init()
+        weatherViewModel.init(city,lati,longi)
 
-        Toast.makeText(activity,arraySize.toString(), Toast.LENGTH_SHORT).show()
+        //Toast.makeText(activity,city, Toast.LENGTH_SHORT).show()
 
+        Toast.makeText(activity,city, Toast.LENGTH_SHORT).show()
         futureWeatherObserver = Observer { newWeather ->
+
+            //
+            val tempScale = sharedPreference.getValueInt("tempScale")
             // Update the UI
             futureWeatherResponseOWM = newWeather
-
-            recycler_view.adapter = CurrentStatusContentAdapter(getSampleRows(1) , futureWeatherResponseOWM, this@HomeFragment)
-
+            recycler_view.adapter = CurrentStatusContentAdapter(getSampleRows(1) , futureWeatherResponseOWM, this@HomeFragment, tempScale)
             recycler_view.layoutManager = LinearLayoutManager(this@HomeFragment.context)
-
         }
 
         weatherViewModel.getFutureWeatherRepository()!!.observe(this, futureWeatherObserver)
@@ -58,15 +55,12 @@ class HomeFragment (private val arraySize:Int): Fragment() {
 
     companion object{
         //private const val inputData = "dummy"
-
         //fun newInstance(movie: Cities): HomeFragment{
-        fun newInstance(str : String , size:Int): HomeFragment{
+        fun newInstance( city:String, lati:Double, longi:Double, sharedPreference: SharedPreference): HomeFragment{
             //val args = Bundle()
             //args.putSerializable(inputData, input)
-
-            val frag = HomeFragment(size)
+            val frag = HomeFragment( city, lati, longi,sharedPreference)
             //frag.arguments = args
-
             return frag
         }
     }

@@ -8,4 +8,7 @@
     <color name="editTextColor">#ffff25e6</color>
     <color name="currentStatusColor">#04FFE2</color>
     <color name="manageCitiesColor">#03776D</color>
+    <color name="yellow">#FFEB3B</color>
+    <color name="lightBlue">#00E0FF</color>
+    <color name="dialogBox">#F3F3F3</color>
 </resources>

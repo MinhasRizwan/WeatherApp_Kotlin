@@ -9,10 +9,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.loginapp_5_08.R
-import com.example.loginapp_5_08.data.response.response.future.FutureWeatherResponseOWM
+import com.example.loginapp_5_08.homeScreen.openWeatherApi.response.future.FutureWeatherResponseOWM
 import kotlinx.android.synthetic.main.layout_hour_details.view.*
 
-class HoursContentAdapter( private val futureWeatherResponseData: FutureWeatherResponseOWM, private val homeFragment: HomeFragment) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class HoursContentAdapter( private val futureWeatherResponseData: FutureWeatherResponseOWM, private val homeFragment: HomeFragment, private val tempScale:Int) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     class HourDaysViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         val timeDay: TextView = itemView.timetv
@@ -40,7 +40,16 @@ class HoursContentAdapter( private val futureWeatherResponseData: FutureWeatherR
     private fun onBindHourDay(holder: RecyclerView.ViewHolder, pos:Int) {
         val itemRow = holder as HourDaysViewHolder
         itemRow.timeDay.text = futureWeatherResponseData.list[pos].dtTxt.substring(11,16)
-        itemRow.timeTemp.text = ((futureWeatherResponseData.list[pos].main.tempMax.toInt()-273).toString()) + "° C"
+
+        if (tempScale == 0)
+        {
+            itemRow.timeTemp.text = ((futureWeatherResponseData.list[pos].main.tempMax.toInt()-273).toString()) + "° C"
+        }
+        else{
+            //1.8*((futureWeatherResponseData.list[0].main.temp) - 273.15) + 32
+            itemRow.timeTemp.text = (1.8*(futureWeatherResponseData.list[pos].main.tempMax-273)+32).toInt().toString() + "° F"
+        }
+
         Glide.with(homeFragment).load("https://openweathermap.org/img/wn/"+futureWeatherResponseData.list[pos+(pos)].weather[0].icon+"@2x.png").into(itemRow.timeImage)
     }
 

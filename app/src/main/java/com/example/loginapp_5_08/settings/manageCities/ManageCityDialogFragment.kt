@@ -6,85 +6,104 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.ListView
+import android.widget.*
 import androidx.fragment.app.DialogFragment
-import com.example.loginapp_5_08.R
-import android.widget.ArrayAdapter
-import com.example.loginapp_5_08.ViewPager.CityHelper
-import android.widget.Toast
-import android.widget.AdapterView
+import androidx.lifecycle.ViewModelProviders
 import com.example.loginapp_5_08.shared.SharedPreference
+import java.util.ArrayList
+import android.widget.TextView
+import com.example.loginapp_5_08.R
+import kotlinx.android.synthetic.main.layout_manage_cities.*
+import android.app.ActionBar
+
 
 class ManageCityDialogFragment(val sharedPreference: SharedPreference) : DialogFragment(){
 
     private var content: String? = null
-
+    private lateinit var manageCityViewModel: ManageCityViewModel
     lateinit var  listAdapter : ArrayAdapter<String>
     lateinit var  listAdapterAddedCities : ArrayAdapter<String>
+    //lateinit var citiesSpinner:Spinner
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         content = arguments?.getString("content")
-
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.layout_manage_cities, container, false)
+        val view = inflater.inflate(com.example.loginapp_5_08.R.layout.layout_manage_cities, container, false)
 
-        val searchCity = view.findViewById<View>(R.id.serchText) as EditText
-        val citiesList = view.findViewById<View>(R.id.citiesList) as ListView
-        val addedCitiesList = view.findViewById<View>(R.id.addedCities) as ListView
+        val textView = TextView(context)
+        textView.text = "Added Cities"
 
+        manageCityViewModel = ViewModelProviders.of(this).get(ManageCityViewModel::class.java)
+        manageCityViewModel.init(sharedPreference, view)
 
-        //FontUtils.setTypeface(getActivity(), textViewQuestion, "fonts/mangal.ttf");
-        //FontUtils.setTypeface(getActivity(), textViewAnswer, "fonts/mangal.ttf");
+        val searchCity = view.findViewById<View>(com.example.loginapp_5_08.R.id.serchText) as EditText
+        val citiesList = view.findViewById<View>(com.example.loginapp_5_08.R.id.allCities) as ListView
+        val addedCitiesList = view.findViewById<View>(com.example.loginapp_5_08.R.id.addedCities) as ListView
+       // citiesSpinner = view.findViewById<View>(com.example.loginapp_5_08.R.id.spinnerCities) as Spinner
 
-        val movies = CityHelper.getMoviesFromJson("cities.json", view.context)
+        addedCitiesList.addHeaderView(textView)
 
-        val movieSize = movies.size
+        //ViewModel.getAllCities()
+        val cities = manageCityViewModel.getAllCities()
 
-
-
-        val added = sharedPreference.getArrayList("addedCitiesList")
-        val listViewAdapterContent:ArrayList<String> = ArrayList()
-
-        for (i in 0..movieSize-1) {
-            listViewAdapterContent.add(movies[i].name)
-        }
-
-        listAdapter = ArrayAdapter(view.context, android.R.layout.simple_list_item_1, android.R.id.text1, listViewAdapterContent)
-        listAdapterAddedCities = ArrayAdapter(view.context, android.R.layout.simple_list_item_1,android.R.id.text1, added)
+        //ListAdapter For All Cities
+        listAdapter = manageCityViewModel.getListAdapterAllCities()
+        //ListAdapter For All Added Cities
+        listAdapterAddedCities = manageCityViewModel.getListAdapterAddedCities()
 
 
         citiesList.setAdapter(listAdapter)
         addedCitiesList.setAdapter(listAdapterAddedCities)
 
-        citiesList.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
+        listAdapter.getFilter().filter("1232442")
+
+        citiesList.onItemClickListener = AdapterView.OnItemClickListener {parent,view, position, id ->
+            // Get the selected item text from ListView
+            val selectedItem = parent.getItemAtPosition(position) as String
+
+            Toast.makeText(context, parent.getItemAtPosition(position).toString() + " Added", Toast.LENGTH_LONG).show()
+            searchCity.setText(selectedItem)
+
+            manageCityViewModel.addCityIntoUserPreference(selectedItem)
+
+        }
+
+        addedCitiesList.onItemLongClickListener = AdapterView.OnItemLongClickListener{
+                parent, veiw, position, id ->
             // make Toast when click
-            Toast.makeText(view.context, "Position $position", Toast.LENGTH_LONG).show()
-            searchCity.setText(movies[position].name)
+            //Delete City from user preference
+            Toast.makeText(veiw.context, parent.getItemAtPosition(position).toString() + " Deleted", Toast.LENGTH_LONG).show()
 
-            val adde = sharedPreference.getArrayList("addedCitiesList")
-            adde.add(movies[position].name)
+            manageCityViewModel.deleteCityFromUserPreference(position-1)
 
-            sharedPreference.saveArrayList("addedCitiesList",adde)
-
+            return@OnItemLongClickListener true
         }
 
         searchCity.addTextChangedListener(object:TextWatcher {
 
             override fun beforeTextChanged(s:CharSequence, start:Int, count:Int, after:Int) {
+
             }
 
             override fun onTextChanged(s:CharSequence, start:Int, before:Int, count:Int) {
+
+                //val lp = citiesList.getLayoutParams()
+
+                //lp.height = 600
+                //citiesList.setLayoutParams(lp)
+
                 listAdapter.getFilter().filter(s)
+
+                citiesList.visibility = View.VISIBLE
             }
 
             override fun afterTextChanged(s:Editable) {
             }
-        });
+        })
 
         return view
     }
@@ -106,4 +125,9 @@ class ManageCityDialogFragment(val sharedPreference: SharedPreference) : DialogF
             return f
         }
     }
+
+    //add items into spinner dynamically
+
+
+
 }

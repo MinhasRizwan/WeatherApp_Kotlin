@@ -1,10 +1,8 @@
-package com.example.loginapp_5_08.data
+package com.example.loginapp_5_08.homeScreen.openWeatherApi
 
-import androidx.lifecycle.MutableLiveData
-import com.example.loginapp_5_08.data.response.response.current.CurrentWeatherResponseOWM
-import com.example.loginapp_5_08.data.response.response.future.FutureWeatherResponseOWM
+import com.example.loginapp_5_08.homeScreen.openWeatherApi.response.current.CurrentWeatherResponseOWM
+import com.example.loginapp_5_08.homeScreen.openWeatherApi.response.future.FutureWeatherResponseOWM
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
-import kotlinx.coroutines.Deferred
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Call
@@ -19,6 +17,7 @@ const val API_KEY2 = "5c2e9349aae04a0135de96c61ca1b68b"
 
 //http://api.openweathermap.org/data/2.5/forecast?q=London,uk&APPID=5c2e9349aae04a0135de96c61ca1b68b
 //http://api.openweathermap.org/data/2.5/weather?q=London,uk&APPID=5c2e9349aae04a0135de96c61ca1b68b
+//http://api.openweathermap.org/data/2.5/forecast?lat=31.5204&lon=74.3587&APPID=5c2e9349aae04a0135de96c61ca1b68b
 
 interface OpenWeatherApiService {
     @GET("weather")
@@ -35,9 +34,16 @@ interface OpenWeatherApiService {
         //@Query("days") days:Int = 7
     ) : Call<FutureWeatherResponseOWM>
 
+    @GET("forecast")
+    fun getFutureWeatherByLocation(
+        @Query("lat") latitude: String,
+        @Query("lon") longitude: String
+        //@Query("days") days:Int = 7
+    ) : Call<FutureWeatherResponseOWM>
+
 
     companion object{
-        operator fun invoke(): OpenWeatherApiService{
+        operator fun invoke(): OpenWeatherApiService {
             val requestInterceptor = Interceptor{chain ->
 
                 val url = chain.request()

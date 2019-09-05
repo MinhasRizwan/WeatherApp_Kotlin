@@ -31,4 +31,5 @@
         <item> F </item>
 
     </string-array>
+    <string name="country_prompt">Choose a City</string>
 </resources>

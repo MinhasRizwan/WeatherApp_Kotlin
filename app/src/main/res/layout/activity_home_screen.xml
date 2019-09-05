@@ -4,6 +4,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:orientation="vertical"
         tools:context=".homeScreen.HomeScreen">
 
@@ -14,6 +15,14 @@
             android:theme="@style/AppTheme"
             android:id="@+id/toolbar"
     />
+
+    <com.google.android.material.tabs.TabLayout
+            android:background="@color/currentStatusColor"
+            app:tabTextColor="@color/colorPrimary"
+            app:tabBackground="@color/yellow"
+            android:id="@+id/cityTabLayout"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent" />
 
     <androidx.viewpager.widget.ViewPager
             android:layout_width="match_parent"

@@ -1,4 +1,4 @@
-package com.example.loginapp_5_08.data.response.response.future
+package com.example.loginapp_5_08.homeScreen.openWeatherApi.response.future
 
 data class City(
     val coord: Coord,

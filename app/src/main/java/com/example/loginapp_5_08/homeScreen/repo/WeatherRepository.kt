@@ -1,12 +1,12 @@
-package com.example.loginapp_5_08.data
+package com.example.loginapp_5_08.homeScreen.repo
 
 import androidx.lifecycle.*
-import com.example.loginapp_5_08.data.response.response.current.CurrentWeatherResponseOWM
-import com.example.loginapp_5_08.data.response.response.future.FutureWeatherResponseOWM
+import com.example.loginapp_5_08.homeScreen.openWeatherApi.OpenWeatherApiService
+import com.example.loginapp_5_08.homeScreen.openWeatherApi.response.current.CurrentWeatherResponseOWM
+import com.example.loginapp_5_08.homeScreen.openWeatherApi.response.future.FutureWeatherResponseOWM
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import kotlin.coroutines.coroutineContext
 
 
 class WeatherRepository : LifecycleOwner {
@@ -18,17 +18,12 @@ class WeatherRepository : LifecycleOwner {
     private var openWeatherApiService = OpenWeatherApiService()
 
     companion object{
-        fun getInstance():WeatherRepository{
+        fun getInstance(): WeatherRepository {
             val weatherRepository = WeatherRepository()
 
             return weatherRepository
         }
     }
-
-    fun WeatherRepository() {
-        openWeatherApiService = OpenWeatherApiService()
-    }
-
 
     fun getCurrentWeather(): MutableLiveData<CurrentWeatherResponseOWM>{
         val currentData = MutableLiveData<CurrentWeatherResponseOWM>()
@@ -51,9 +46,9 @@ class WeatherRepository : LifecycleOwner {
     }
 
 
-    fun getFutureWeather(): MutableLiveData<FutureWeatherResponseOWM>{
+    fun getFutureWeather(city:String): MutableLiveData<FutureWeatherResponseOWM>{
         val futureData = MutableLiveData<FutureWeatherResponseOWM>()
-        openWeatherApiService.getFutureWeather("London").enqueue(object : Callback<FutureWeatherResponseOWM> {
+        openWeatherApiService.getFutureWeather(city).enqueue(object : Callback<FutureWeatherResponseOWM> {
 
             override fun onResponse(
                 call: Call<FutureWeatherResponseOWM>,
@@ -71,6 +66,24 @@ class WeatherRepository : LifecycleOwner {
         return futureData
     }
 
+    fun getFutureWeatherByLocation(lati:Double, longi:Double): MutableLiveData<FutureWeatherResponseOWM>{
+        val futureData = MutableLiveData<FutureWeatherResponseOWM>()
+        openWeatherApiService.getFutureWeatherByLocation(lati.toString(),longi.toString()).enqueue(object : Callback<FutureWeatherResponseOWM> {
 
+            override fun onResponse(
+                call: Call<FutureWeatherResponseOWM>,
+                response: Response<FutureWeatherResponseOWM>
+            ) {
+                if (response.isSuccessful) {
+                    futureData.value = response.body()
+                }
+            }
+
+            override fun onFailure(call: Call<FutureWeatherResponseOWM>, t: Throwable) {
+                futureData.value = null
+            }
+        })
+        return futureData
+    }
 
 }

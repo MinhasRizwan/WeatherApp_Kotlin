@@ -1,10 +1,8 @@
 package com.example.loginapp_5_08.shared
 
-import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.Gson
-import android.preference.PreferenceManager
 import com.google.gson.reflect.TypeToken
 
 
@@ -20,12 +18,6 @@ class SharedPreference (context: Context){
 
         editor.putInt(KEY_NAME, value)
         editor.apply()
-    }
-
-    //to store list of cities
-    fun saveCity(KEY_NAME : String , value : String)
-    {
-
     }
 
     //to store String data
@@ -92,4 +84,5 @@ class SharedPreference (context: Context){
         }.getType()
         return gson.fromJson<ArrayList<String>>(json, type)
     }
+
 }

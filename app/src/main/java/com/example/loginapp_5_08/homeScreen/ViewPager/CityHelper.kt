@@ -1,4 +1,4 @@
-package com.example.loginapp_5_08.ViewPager
+package com.example.loginapp_5_08.homeScreen.ViewPager
 
 import android.content.Context
 import org.json.JSONException
@@ -10,11 +10,11 @@ object CityHelper {
     val KEY_TITLE = "id"
     val KEY_RATING = "name"
     val KEY_POSTER_URI = "country"
-    val KEY_OVERVIEW = "coord"
+    //val KEY_OVERVIEW = "coord"
 
-    fun getMoviesFromJson(fileName: String, context: Context): ArrayList<Cities> {
+    fun getCitiesFromJson(fileName: String, context: Context): ArrayList<Cities> {
 
-        val movies = ArrayList<Cities>()
+        val cities = ArrayList<Cities>()
 
         try {
             // Load the JSONArray from the file
@@ -28,13 +28,13 @@ object CityHelper {
                 val cityname = jsonCities.getJSONObject(index).getString(KEY_RATING)
                 val country = jsonCities.getJSONObject(index).getString(KEY_POSTER_URI)
                 //val coord = jsonCities.getJSONObject(index).getJSONArray(KEY_OVERVIEW)
-                movies.add(Cities(cityId, cityname, country))
+                cities.add(Cities(cityId, cityname, country))
             }
         } catch (e: JSONException) {
-            return movies
+            return cities
         }
 
-        return movies
+        return cities
     }
 
     private fun loadJsonFromFile(filename: String, context: Context): String {

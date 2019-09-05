@@ -28,8 +28,6 @@ class SettingsActivity : AppCompatActivity(){
 
         setSupportActionBar(findViewById(R.id.toolbar))
 
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
         sharedPreference = SharedPreference(this)
 
         getSavedValues()
@@ -63,9 +61,6 @@ class SettingsActivity : AppCompatActivity(){
         checkedTextView.isChecked = cityChecked
         */
 
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
         tempScaleSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
                 sharedPreference.save("tempScale", position)
@@ -76,9 +71,6 @@ class SettingsActivity : AppCompatActivity(){
 
             }
         }
-
-
-
     }
 
     private fun setAdapter() : Spinner
@@ -114,6 +106,9 @@ class SettingsActivity : AppCompatActivity(){
                     if (checked) {
                         //userPrefViewModel.insertPref(tempUnit,true)
                         sharedPreference.save("currentLocation",true)
+                        sharedPreference.save("longitude", "74.3587")
+                        sharedPreference.save("latitude", "31.5204")
+
                     } else {
                         sharedPreference.save("currentLocation", false)
                     }
