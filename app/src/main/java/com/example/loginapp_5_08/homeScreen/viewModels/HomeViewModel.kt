@@ -1,6 +1,9 @@
 package com.example.loginapp_5_08.homeScreen.viewModels
 
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
+import com.example.loginapp_5_08.settings.roomDB.City
+import com.example.loginapp_5_08.settings.roomDB.CityViewModel
 import com.example.loginapp_5_08.shared.SharedPreference
 
 class HomeViewModel : ViewModel() {
@@ -29,4 +32,6 @@ class HomeViewModel : ViewModel() {
     fun init(sharedPreference: SharedPreference) {
         sharedPreferences = sharedPreference
     }
+
+
 }

@@ -25,6 +25,10 @@ import android.widget.Toast
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.loginapp_5_08.settings.roomDB.City
+import com.example.loginapp_5_08.settings.roomDB.CityViewModel
 import com.google.android.gms.location.LocationListener
 
 class HomeScreen : AppCompatActivity(), GoogleApiClient.ConnectionCallbacks,
@@ -53,9 +57,17 @@ GoogleApiClient.OnConnectionFailedListener, LocationListener {
     // integer for permissions results request
     private val ALL_PERMISSIONS_RESULT = 1011
 
+    //
+    private lateinit var cityViewModel: CityViewModel
+    private lateinit var cityObserver: Observer<List<City>>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home_screen)
+
+        //
+        cityViewModel = ViewModelProviders.of(this).get(CityViewModel::class.java)
+
 
         //Current Location
         permissions.add(Manifest.permission.ACCESS_FINE_LOCATION)
@@ -111,10 +123,35 @@ GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
         cityAdded.reversed()
 
-        //setPagerAdapter with viewPager
         pagerAdapter = WeatherPagerAdapter(supportFragmentManager, cityAdded, latitude,longitude, sharedPreference)
         viewPager.adapter = pagerAdapter
         viewPager.currentItem = pagerAdapter.cities.size
+
+
+        //setPagerAdapter with viewPager
+        cityObserver = Observer { newCity ->
+
+            // Update the cached copy of the words in the adapter.
+            //    newCity?.let { adapter?.setCities(it) }
+            //    Toast.makeText(context, "Added", Toast.LENGTH_LONG).show()
+
+            // Update the UI
+            var citiesAdded = newCity
+
+            var addedCity = ArrayList<String>()
+
+            for (i in citiesAdded){
+                addedCity.add(i.name)
+            }
+
+            pagerAdapter = WeatherPagerAdapter(supportFragmentManager, addedCity, latitude,longitude, sharedPreference)
+            viewPager.adapter = pagerAdapter
+            viewPager.currentItem = pagerAdapter.cities.size
+
+        }
+
+        cityViewModel.allCities!!.observe(this, cityObserver)
+
 
         //Setting Tab with View Pager
         cityTabLayout.setupWithViewPager(viewPager)
@@ -125,21 +162,11 @@ GoogleApiClient.OnConnectionFailedListener, LocationListener {
     override fun onResume() {
         super.onResume()
 
-        // we build google api client
-        //googleApiClient = GoogleApiClient.Builder(this).addApi(LocationServices.API).addConnectionCallbacks(this)
-          //  .addOnConnectionFailedListener(this).build()
-
-        ///////////////////////////////////////////////////////////////////////////////////////////////
-
-        // we build google api client
-//        googleApiClient = GoogleApiClient.Builder(this).addApi(LocationServices.API).addConnectionCallbacks(this)
-  //          .addOnConnectionFailedListener(this).build()
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         if (!checkPlayServices()) {
             //locationTv.setText("You need to install Google Play Services to use the App properly");
         }
-
 
         /////////////////////////////////////////////////////////////////////////////////
         //getCurrentLocationCheck
@@ -157,6 +184,30 @@ GoogleApiClient.OnConnectionFailedListener, LocationListener {
         //setPagerAdapter
         pagerAdapter = WeatherPagerAdapter(supportFragmentManager, cityAdded, latitude,longitude, sharedPreference)
         viewPager.adapter = pagerAdapter
+
+
+        cityObserver = Observer { newCity ->
+
+            // Update the cached copy of the words in the adapter.
+            //    newCity?.let { adapter?.setCities(it) }
+            //    Toast.makeText(context, "Added", Toast.LENGTH_LONG).show()
+
+            // Update the UI
+            var citiesAdded = newCity
+
+            var addedCity = ArrayList<String>()
+
+            for (i in citiesAdded){
+                addedCity.add(i.name)
+            }
+
+            pagerAdapter = WeatherPagerAdapter(supportFragmentManager, addedCity, latitude,longitude, sharedPreference)
+            viewPager.adapter = pagerAdapter
+            viewPager.currentItem = pagerAdapter.cities.size- pagerAdapter.cities.size
+
+        }
+
+        cityViewModel.allCities!!.observe(this, cityObserver)
 
         viewPager.currentItem = pagerAdapter.cities.size - pagerAdapter.cities.size
 
@@ -238,56 +289,60 @@ GoogleApiClient.OnConnectionFailedListener, LocationListener {
     }
 
     override fun onConnected(p0: Bundle?) {
-    if (ActivityCompat.checkSelfPermission(this,
+        if (ActivityCompat.checkSelfPermission(this,
 	                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
         &&  ActivityCompat.checkSelfPermission(this,
 		             Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-      return
+
+        return
+        }
+
+        // Permissions ok, we get last location
+        location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient)
+
+        if (location != null) {
+            latitude = location!!.latitude
+            longitude = location!!.longitude
+
+          //locationTv.setText("Latitude : " + location.getLatitude() + "\nLongitude : " + location.getLongitude());
+        }
+
+        startLocationUpdates()
     }
 
-    // Permissions ok, we get last location
-    location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient)
+    private fun startLocationUpdates() {
+        locationRequest = LocationRequest()
+        locationRequest!!.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+        locationRequest!!.setInterval(UPDATE_INTERVAL)
+        locationRequest!!.setFastestInterval(FASTEST_INTERVAL)
 
-    if (location != null) {
-        latitude = location!!.latitude
-        longitude = location!!.longitude
-
-      //locationTv.setText("Latitude : " + location.getLatitude() + "\nLongitude : " + location.getLongitude());
-    }
-
-    startLocationUpdates()
-  }
-
-    fun startLocationUpdates() {
-    locationRequest = LocationRequest()
-    locationRequest!!.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-    locationRequest!!.setInterval(UPDATE_INTERVAL)
-    locationRequest!!.setFastestInterval(FASTEST_INTERVAL)
-
-    if (ActivityCompat.checkSelfPermission(this,
+        if (ActivityCompat.checkSelfPermission(this,
 	          Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-          &&  ActivityCompat.checkSelfPermission(this,
+              &&  ActivityCompat.checkSelfPermission(this,
 		      Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-      Toast.makeText(this, "You need to enable permissions to display location !", Toast.LENGTH_SHORT).show()
-    }
 
-    LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this)
-  }
+                    Toast.makeText(this, "You need to enable permissions to display location !", Toast.LENGTH_SHORT).show()
+                }
+
+        LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this)
+    }
 
     override fun onConnectionSuspended(p0: Int) {
-  }
 
-  override fun onConnectionFailed(p0: ConnectionResult) {
-  }
-
-  override fun onLocationChanged(p0: Location?) {
-    if (location != null) {
-        latitude = location!!.latitude
-        longitude = location!!.longitude
-
-        //locationTv.setText("Latitude : " + location.getLatitude() + "\nLongitude : " + location.getLongitude());
     }
-  }
+
+    override fun onConnectionFailed(p0: ConnectionResult) {
+
+    }
+
+    override fun onLocationChanged(p0: Location?) {
+        if (location != null) {
+            latitude = location!!.latitude
+            longitude = location!!.longitude
+
+            //locationTv.setText("Latitude : " + location.getLatitude() + "\nLongitude : " + location.getLongitude());
+        }
+    }
 
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
@@ -301,6 +356,6 @@ GoogleApiClient.OnConnectionFailedListener, LocationListener {
         }
 
         googleApiClient?.connect()
-  }
-    
+    }
+
 }

@@ -11,4 +11,5 @@
     <color name="yellow">#FFEB3B</color>
     <color name="lightBlue">#00E0FF</color>
     <color name="dialogBox">#F3F3F3</color>
+    <color name="currentStatus">#2EB6F6</color>
 </resources>

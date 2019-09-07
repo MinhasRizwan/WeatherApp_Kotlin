@@ -19,7 +19,7 @@
     <com.google.android.material.tabs.TabLayout
             android:background="@color/currentStatusColor"
             app:tabTextColor="@color/colorPrimary"
-            app:tabBackground="@color/yellow"
+            app:tabBackground="@color/white"
             android:id="@+id/cityTabLayout"
             android:layout_height="wrap_content"
             android:layout_width="match_parent" />

@@ -4,12 +4,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.*
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import com.example.loginapp_5_08.R
-import com.example.loginapp_5_08.settings.Database.UserPref
 import com.example.loginapp_5_08.settings.manageCities.ManageCityDialogFragment
-import com.example.loginapp_5_08.settings.vewModel.UserPrefViewModel
 import com.example.loginapp_5_08.shared.SharedPreference
 import kotlinx.android.synthetic.main.activity_settings.*
 
@@ -106,8 +102,8 @@ class SettingsActivity : AppCompatActivity(){
                     if (checked) {
                         //userPrefViewModel.insertPref(tempUnit,true)
                         sharedPreference.save("currentLocation",true)
-                        sharedPreference.save("longitude", "74.3587")
-                        sharedPreference.save("latitude", "31.5204")
+                        //sharedPreference.save("longitude", "74.3587")
+                        //sharedPreference.save("latitude", "31.5204")
 
                     } else {
                         sharedPreference.save("currentLocation", false)
@@ -120,7 +116,7 @@ class SettingsActivity : AppCompatActivity(){
     fun manageCities(view: View){
 
         val ft = getSupportFragmentManager().beginTransaction()
-        val newFragment = ManageCityDialogFragment.newInstance("pass content here",sharedPreference)
+        val newFragment = ManageCityDialogFragment.newInstance(view.context, "pass content" ,sharedPreference)
         newFragment.show(ft, "dialog")
 
     }

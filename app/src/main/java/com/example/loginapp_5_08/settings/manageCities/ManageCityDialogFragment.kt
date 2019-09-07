@@ -1,5 +1,6 @@
 package com.example.loginapp_5_08.settings.manageCities
 
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -10,80 +11,150 @@ import android.widget.*
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProviders
 import com.example.loginapp_5_08.shared.SharedPreference
-import java.util.ArrayList
-import android.widget.TextView
-import com.example.loginapp_5_08.R
 import kotlinx.android.synthetic.main.layout_manage_cities.*
-import android.app.ActionBar
+import android.widget.AdapterView
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.loginapp_5_08.R
+import com.example.loginapp_5_08.settings.roomDB.City
+import com.example.loginapp_5_08.settings.roomDB.CityViewModel
+import kotlinx.android.synthetic.main.layout_addedcities_list.view.*
 
-
-class ManageCityDialogFragment(val sharedPreference: SharedPreference) : DialogFragment(){
+class ManageCityDialogFragment(context: Context, private val sharedPreference: SharedPreference) : DialogFragment(){
 
     private var content: String? = null
-    private lateinit var manageCityViewModel: ManageCityViewModel
     lateinit var  listAdapter : ArrayAdapter<String>
-    lateinit var  listAdapterAddedCities : ArrayAdapter<String>
-    //lateinit var citiesSpinner:Spinner
+
+    //View Model
+    private lateinit var cityViewModel: CityViewModel
+    private lateinit var cityObserver: Observer<List<City>>
+
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var adapter: CitiesListAdapter
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setStyle(DialogFragment.STYLE_NO_TITLE, R.style.DialogStyle);
         content = arguments?.getString("content")
+
+
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(com.example.loginapp_5_08.R.layout.layout_manage_cities, container, false)
 
-        val textView = TextView(context)
-        textView.text = "Added Cities"
+        recyclerView = view?.findViewById<RecyclerView>(R.id.recyclerviewAddedCities)!!
+        adapter = context?.let { CitiesListAdapter(it) }!!
+        //recyclerView?.adapter = adapter
+        //recyclerView?.layoutManager = LinearLayoutManager(this@ManageCityDialogFragment.context)
 
-        manageCityViewModel = ViewModelProviders.of(this).get(ManageCityViewModel::class.java)
-        manageCityViewModel.init(sharedPreference, view)
+        cityViewModel = ViewModelProviders.of(this).get(CityViewModel::class.java)
 
-        val searchCity = view.findViewById<View>(com.example.loginapp_5_08.R.id.serchText) as EditText
-        val citiesList = view.findViewById<View>(com.example.loginapp_5_08.R.id.allCities) as ListView
-        val addedCitiesList = view.findViewById<View>(com.example.loginapp_5_08.R.id.addedCities) as ListView
-       // citiesSpinner = view.findViewById<View>(com.example.loginapp_5_08.R.id.spinnerCities) as Spinner
+        return view
+    }
 
-        addedCitiesList.addHeaderView(textView)
+    ///////////////////////////////////////////////////////////////
+    interface OnItemLongClickListener {
+        fun onItemLongClicked(position: Int, view: View)
+    }
+
+    fun RecyclerView.addOnItemLongClickListener(onClickLongListener: OnItemLongClickListener) {
+        this.addOnChildAttachStateChangeListener(object : RecyclerView.OnChildAttachStateChangeListener {
+            override fun onChildViewDetachedFromWindow(view: View) {
+                view.setOnLongClickListener(null)
+            }
+
+            override fun onChildViewAttachedToWindow(view: View) {
+                view.setOnLongClickListener({
+                    val holder = getChildViewHolder(view)
+                    onClickLongListener.onItemLongClicked(holder.adapterPosition, view)
+
+                    return@setOnLongClickListener true
+                })
+            }
+        })
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        ////////////////////////////////////////////////////////////
+        ////////////////////////
+        cityObserver = Observer { newCity ->
+
+            // Update the cached copy of the words in the adapter.
+            //    newCity?.let { adapter?.setCities(it) }
+            //    Toast.makeText(context, "Added", Toast.LENGTH_LONG).show()
+
+            // Update the UI
+            adapter.setCities(newCity)
+            recyclerView.adapter = adapter
+            recyclerView.layoutManager = LinearLayoutManager(this@ManageCityDialogFragment.context)
+
+            //recycler_view.adapter = CurrentStatusContentAdapter(getSampleRows(1) , futureWeatherResponseOWM, this@HomeFragment, tempScale)
+            //recycler_view.layoutManager = LinearLayoutManager(this@HomeFragment.context)
+        }
+
+        cityViewModel.allCities!!.observe(this, cityObserver)
+//////////////////////////
 
         //ViewModel.getAllCities()
-        val cities = manageCityViewModel.getAllCities()
+        val cities = cityViewModel.getAllCities()
 
         //ListAdapter For All Cities
-        listAdapter = manageCityViewModel.getListAdapterAllCities()
+        listAdapter = cityViewModel.getListAdapterAllCities()
+
         //ListAdapter For All Added Cities
-        listAdapterAddedCities = manageCityViewModel.getListAdapterAddedCities()
 
+        spinnerCities.setAdapter(listAdapter)
 
-        citiesList.setAdapter(listAdapter)
-        addedCitiesList.setAdapter(listAdapterAddedCities)
 
         listAdapter.getFilter().filter("1232442")
 
-        citiesList.onItemClickListener = AdapterView.OnItemClickListener {parent,view, position, id ->
-            // Get the selected item text from ListView
-            val selectedItem = parent.getItemAtPosition(position) as String
+        spinnerCities.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
 
-            Toast.makeText(context, parent.getItemAtPosition(position).toString() + " Added", Toast.LENGTH_LONG).show()
-            searchCity.setText(selectedItem)
+            override fun onItemSelected(arg0: AdapterView<*>, arg1: View, pos: Int, arg3: Long) {
 
-            manageCityViewModel.addCityIntoUserPreference(selectedItem)
+                if (pos !=0){
+                    val item = spinnerCities.getSelectedItem().toString()
+                    Toast.makeText(arg1.context, arg0.getItemAtPosition(pos).toString() + " Added", Toast.LENGTH_LONG).show()
+                    //manageCityViewModel.addCityIntoUserPreference(item)
+                    serchText.setText(item)
 
+                    for (i in cities) {
+                        if (i.name.equals(item)){
+                            val city = City(i.id.toInt(), i.name, i.country, 123455.0, 42242.43 )
+                            cityViewModel.insert(city)
+                        }
+                    }
+
+                }
+            }
+
+            override fun onNothingSelected(arg0: AdapterView<*>) {
+
+            }
         }
 
-        addedCitiesList.onItemLongClickListener = AdapterView.OnItemLongClickListener{
-                parent, veiw, position, id ->
-            // make Toast when click
-            //Delete City from user preference
-            Toast.makeText(veiw.context, parent.getItemAtPosition(position).toString() + " Deleted", Toast.LENGTH_LONG).show()
 
-            manageCityViewModel.deleteCityFromUserPreference(position-1)
+        recyclerView.addOnItemLongClickListener(object : OnItemLongClickListener {
+            override fun onItemLongClicked(position: Int, view: View) {
+                Toast.makeText(context,  view.textViewCity.text.toString() + "Deleted", Toast.LENGTH_SHORT).show()
 
-            return@OnItemLongClickListener true
-        }
+                for (i in cities) {
+                    if (i.name.equals(view.textViewCity.text.toString())){
+                        val city = City(i.id.toInt(), i.name, i.country, 123455.0, 42242.43 )
+                        cityViewModel.delete(city)
+                    }
+                }
 
-        searchCity.addTextChangedListener(object:TextWatcher {
+            }
+        })
+
+
+        serchText.addTextChangedListener(object:TextWatcher {
 
             override fun beforeTextChanged(s:CharSequence, start:Int, count:Int, after:Int) {
 
@@ -97,15 +168,14 @@ class ManageCityDialogFragment(val sharedPreference: SharedPreference) : DialogF
                 //citiesList.setLayoutParams(lp)
 
                 listAdapter.getFilter().filter(s)
-
-                citiesList.visibility = View.VISIBLE
+                spinnerCities.dropDownWidth = 800
+                spinnerCities.performClick()
             }
 
             override fun afterTextChanged(s:Editable) {
             }
         })
 
-        return view
     }
 
     companion object {
@@ -114,8 +184,8 @@ class ManageCityDialogFragment(val sharedPreference: SharedPreference) : DialogF
          * Create a new instance of CustomDialogFragment, providing "num" as an
          * argument.
          */
-        fun newInstance(content: String, sharedPreference: SharedPreference): ManageCityDialogFragment {
-            val f = ManageCityDialogFragment(sharedPreference)
+        fun newInstance(context:Context, content: String, sharedPreference: SharedPreference): ManageCityDialogFragment {
+            val f = ManageCityDialogFragment(context, sharedPreference)
 
             // Supply num input as an argument.
             val args = Bundle()
@@ -126,8 +196,5 @@ class ManageCityDialogFragment(val sharedPreference: SharedPreference) : DialogF
         }
     }
 
-    //add items into spinner dynamically
-
-
-
 }
+
