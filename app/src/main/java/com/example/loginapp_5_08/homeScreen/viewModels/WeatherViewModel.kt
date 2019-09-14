@@ -4,6 +4,7 @@ import androidx.lifecycle.*
 import com.example.loginapp_5_08.homeScreen.repo.WeatherRepository
 import com.example.loginapp_5_08.homeScreen.openWeatherApi.response.current.CurrentWeatherResponseOWM
 import com.example.loginapp_5_08.homeScreen.openWeatherApi.response.future.FutureWeatherResponseOWM
+import com.example.loginapp_5_08.settings.roomDB.City
 
 class WeatherViewModel : ViewModel(), LifecycleOwner {
     override fun getLifecycle(): Lifecycle {
@@ -15,21 +16,13 @@ class WeatherViewModel : ViewModel(), LifecycleOwner {
 
     private var weatherRepository: WeatherRepository? = null
 
-    fun init(cityName:String, lati:Double, longi:Double) {
+    fun init(city: City) {
         if (mutableCuurrentLiveData != null ) {
             return
         }
         weatherRepository = WeatherRepository.getInstance()
 
-        mutableCuurrentLiveData = weatherRepository!!.getCurrentWeather()
-
-        if(cityName == "current")
-        {
-            mutableFutureLiveData = weatherRepository!!.getFutureWeatherByLocation(lati,longi)
-        }
-        else{
-            mutableFutureLiveData = weatherRepository!!.getFutureWeather(cityName)
-        }
+        mutableFutureLiveData = weatherRepository!!.getFutureWeatherByLocation(city.latitude, city.longitude)
     }
 
     fun getFutureWeatherRepository(): LiveData<FutureWeatherResponseOWM>? {

@@ -13,10 +13,11 @@ import com.example.loginapp_5_08.homeScreen.openWeatherApi.response.future.Futur
 import kotlinx.android.synthetic.main.fragment_home_screen.*
 import com.example.loginapp_5_08.homeScreen.viewModels.WeatherViewModel
 import androidx.lifecycle.ViewModelProviders
+import com.example.loginapp_5_08.settings.roomDB.City
 import com.example.loginapp_5_08.shared.SharedPreference
 
 
-class HomeFragment ( private val city:String, private val lati: Double, private val longi: Double, private val sharedPreference: SharedPreference): Fragment() {
+class HomeFragment (private val city: City, private val sharedPreference: SharedPreference): Fragment() {
 
     private lateinit var weatherViewModel: WeatherViewModel
     private lateinit var futureWeatherResponseOWM: FutureWeatherResponseOWM
@@ -29,11 +30,11 @@ class HomeFragment ( private val city:String, private val lati: Double, private 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         weatherViewModel = ViewModelProviders.of(this).get(WeatherViewModel::class.java)
-        weatherViewModel.init(city,lati,longi)
+        weatherViewModel.init(city)
 
         //Toast.makeText(activity,city, Toast.LENGTH_SHORT).show()
 
-        Toast.makeText(activity,city, Toast.LENGTH_SHORT).show()
+        Toast.makeText(activity,city.name, Toast.LENGTH_SHORT).show()
         futureWeatherObserver = Observer { newWeather ->
 
             //
@@ -56,10 +57,10 @@ class HomeFragment ( private val city:String, private val lati: Double, private 
     companion object{
         //private const val inputData = "dummy"
         //fun newInstance(movie: Cities): HomeFragment{
-        fun newInstance( city:String, lati:Double, longi:Double, sharedPreference: SharedPreference): HomeFragment{
+        fun newInstance( city:City, sharedPreference: SharedPreference): HomeFragment{
             //val args = Bundle()
             //args.putSerializable(inputData, input)
-            val frag = HomeFragment( city, lati, longi,sharedPreference)
+            val frag = HomeFragment( city,sharedPreference)
             //frag.arguments = args
             return frag
         }

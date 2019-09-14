@@ -32,4 +32,7 @@
 
     </string-array>
     <string name="country_prompt">Choose a City</string>
+    <string name="search">Search</string>
+    <string name="search_city_here">Search City Here</string>
+    <string name="added_cities">Added Cities :</string>
 </resources>

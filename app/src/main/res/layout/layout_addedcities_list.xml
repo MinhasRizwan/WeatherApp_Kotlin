@@ -6,7 +6,8 @@
 
     <TextView
             android:id="@+id/textViewCity"
-            android:background="@color/yellow"
+            android:background="@color/white"
+            android:textStyle="bold"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="14dp"

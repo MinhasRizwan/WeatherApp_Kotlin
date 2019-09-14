@@ -1,39 +1,36 @@
 package com.example.loginapp_5_08.settings.roomDB
 
-import android.R
 import android.app.Application
-import android.view.View
 import android.widget.ArrayAdapter
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
 import com.example.loginapp_5_08.homeScreen.ViewPager.Cities
 import com.example.loginapp_5_08.homeScreen.ViewPager.CityHelper
-import com.example.loginapp_5_08.shared.SharedPreference
+import android.R
 import kotlinx.coroutines.launch
 
-// Class extends AndroidViewModel and requires application as a parameter.
+// Class extends AndroidViewModel & application as a parameter.
 class CityViewModel(application: Application) : AndroidViewModel(application) {
 
     // The ViewModel maintains a reference to the repository to get data.
     private val repository: CityRepository
-    // LiveData gives us updated words when they change.
+    // LiveData gives us updated cities when they change.
     var allCities: LiveData<List<City>>? = null
 
     lateinit var cities:ArrayList<Cities>
-    var citiesSize = 0
-
+    private var citiesSize = 0
 
     init {
-        // Gets reference to WordDao from WordRoomDatabase to construct
-        // the correct WordRepository.
+        // Gets reference to CityDao from CityRoomDatabase to construct
+        // the correct CityRepository.
         val citiesDao = CityRoomDatabase.getDatabase(application, viewModelScope).cityDao()
         repository = CityRepository(citiesDao)
         allCities = repository.allCities
     }
 
-    //
     fun getAllCities(): ArrayList<Cities>{
+        //reading data from cities.json
         cities = CityHelper.getCitiesFromJson("cities.json", this.getApplication())
         citiesSize = cities.size
 
@@ -43,7 +40,7 @@ class CityViewModel(application: Application) : AndroidViewModel(application) {
     fun getListAdapterAllCities(): ArrayAdapter<String> {
         val listViewAdapterContent:ArrayList<String> = ArrayList()
 
-        for (i in 0..citiesSize-1) {
+        for (i in 0 until citiesSize) {
             listViewAdapterContent.add(cities[i].name)
         }
 
@@ -64,4 +61,5 @@ class CityViewModel(application: Application) : AndroidViewModel(application) {
         repository.delete(city)
 
     }
+
 }

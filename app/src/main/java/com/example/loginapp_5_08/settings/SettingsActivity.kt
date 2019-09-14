@@ -69,6 +69,7 @@ class SettingsActivity : AppCompatActivity(){
         }
     }
 
+
     private fun setAdapter() : Spinner
     {
         val spinner: Spinner = dropdownScale
@@ -116,7 +117,7 @@ class SettingsActivity : AppCompatActivity(){
     fun manageCities(view: View){
 
         val ft = getSupportFragmentManager().beginTransaction()
-        val newFragment = ManageCityDialogFragment.newInstance(view.context, "pass content" ,sharedPreference)
+        val newFragment = ManageCityDialogFragment.newInstance("pass content" )
         newFragment.show(ft, "dialog")
 
     }

@@ -26,7 +26,6 @@ import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.loginapp_5_08.settings.roomDB.City
 import com.example.loginapp_5_08.settings.roomDB.CityViewModel
 import com.google.android.gms.location.LocationListener
@@ -96,7 +95,7 @@ GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
         //View Model
         homeViewModel = ViewModelProviders.of(this).get(HomeViewModel::class.java)
-        homeViewModel.init(sharedPreference)
+        //homeViewModel.init(sharedPreference)
 
         val firstStart = sharedPreference.getValueBoolean("firstStart", true)
 
@@ -110,47 +109,50 @@ GoogleApiClient.OnConnectionFailedListener, LocationListener {
         }
 
         //getCurrentLocationCheck
-        val currentCityCheck = homeViewModel.getCurrentLocationCheck()
+        val currentCityCheck = homeViewModel.getCurrentLocationCheck(sharedPreference)
 
         //getAddedCities
-        var cityAdded = homeViewModel.getAddedCities()
+        val cityAdded = homeViewModel.getAddedCities(sharedPreference)
 
+        //addCurrentCity
+        val currentLoc = City(123, "Current", "Pk", longitude, latitude)
         //addCurrentCity
         if (currentCityCheck == true)
         {
-            cityAdded = homeViewModel.addCurrentCity()
+            //cityAdded = homeViewModel.addCurrentCity()
+            homeViewModel.insert(currentLoc)
+        }
+
+        else if (currentCityCheck == false){
+            homeViewModel.delete(currentLoc)
         }
 
         cityAdded.reversed()
 
-        pagerAdapter = WeatherPagerAdapter(supportFragmentManager, cityAdded, latitude,longitude, sharedPreference)
+        pagerAdapter = WeatherPagerAdapter(supportFragmentManager, cityAdded, sharedPreference)
         viewPager.adapter = pagerAdapter
         viewPager.currentItem = pagerAdapter.cities.size
 
 
         //setPagerAdapter with viewPager
         cityObserver = Observer { newCity ->
-
-            // Update the cached copy of the words in the adapter.
-            //    newCity?.let { adapter?.setCities(it) }
-            //    Toast.makeText(context, "Added", Toast.LENGTH_LONG).show()
-
             // Update the UI
-            var citiesAdded = newCity
+            val citiesAdded = newCity as ArrayList
 
-            var addedCity = ArrayList<String>()
+            val addedCity = ArrayList<String>()
 
             for (i in citiesAdded){
                 addedCity.add(i.name)
             }
 
-            pagerAdapter = WeatherPagerAdapter(supportFragmentManager, addedCity, latitude,longitude, sharedPreference)
+            //pagerAdapter = WeatherPagerAdapter(supportFragmentManager, addedCity, latitude,longitude, sharedPreference)
+            pagerAdapter = WeatherPagerAdapter(supportFragmentManager, citiesAdded, sharedPreference)
             viewPager.adapter = pagerAdapter
             viewPager.currentItem = pagerAdapter.cities.size
 
         }
 
-        cityViewModel.allCities!!.observe(this, cityObserver)
+        homeViewModel.allCities!!.observe(this, cityObserver)
 
 
         //Setting Tab with View Pager
@@ -170,19 +172,25 @@ GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
         /////////////////////////////////////////////////////////////////////////////////
         //getCurrentLocationCheck
-        val currentCityCheck = homeViewModel.getCurrentLocationCheck()
+        val currentCityCheck = homeViewModel.getCurrentLocationCheck(sharedPreference)
 
         //getAddedCities
-        var cityAdded = homeViewModel.getAddedCities()
+        val cityAdded = homeViewModel.getAddedCities(sharedPreference)
 
+        val currentLoc = City(123, "Current", "Pk", longitude, latitude)
         //addCurrentCity
         if (currentCityCheck == true)
         {
-            cityAdded = homeViewModel.addCurrentCity()
+            //cityAdded = homeViewModel.addCurrentCity()
+            homeViewModel.insert(currentLoc)
+        }
+
+        else if (currentCityCheck == false){
+            homeViewModel.delete(currentLoc)
         }
 
         //setPagerAdapter
-        pagerAdapter = WeatherPagerAdapter(supportFragmentManager, cityAdded, latitude,longitude, sharedPreference)
+        pagerAdapter = WeatherPagerAdapter(supportFragmentManager, cityAdded, sharedPreference)
         viewPager.adapter = pagerAdapter
 
 
@@ -193,21 +201,21 @@ GoogleApiClient.OnConnectionFailedListener, LocationListener {
             //    Toast.makeText(context, "Added", Toast.LENGTH_LONG).show()
 
             // Update the UI
-            var citiesAdded = newCity
+            val citiesAdded = newCity as ArrayList
 
-            var addedCity = ArrayList<String>()
+            val addedCity = ArrayList<String>()
 
             for (i in citiesAdded){
                 addedCity.add(i.name)
             }
 
-            pagerAdapter = WeatherPagerAdapter(supportFragmentManager, addedCity, latitude,longitude, sharedPreference)
+            pagerAdapter = WeatherPagerAdapter(supportFragmentManager, citiesAdded, sharedPreference)
             viewPager.adapter = pagerAdapter
             viewPager.currentItem = pagerAdapter.cities.size- pagerAdapter.cities.size
 
         }
 
-        cityViewModel.allCities!!.observe(this, cityObserver)
+        homeViewModel.allCities!!.observe(this, cityObserver)
 
         viewPager.currentItem = pagerAdapter.cities.size - pagerAdapter.cities.size
 

@@ -10,7 +10,7 @@ object CityHelper {
     val KEY_TITLE = "id"
     val KEY_RATING = "name"
     val KEY_POSTER_URI = "country"
-    //val KEY_OVERVIEW = "coord"
+    val KEY_OVERVIEW = "coord"
 
     fun getCitiesFromJson(fileName: String, context: Context): ArrayList<Cities> {
 
@@ -27,8 +27,12 @@ object CityHelper {
                 val cityId = jsonCities.getJSONObject(index).getString(KEY_TITLE)
                 val cityname = jsonCities.getJSONObject(index).getString(KEY_RATING)
                 val country = jsonCities.getJSONObject(index).getString(KEY_POSTER_URI)
-                //val coord = jsonCities.getJSONObject(index).getJSONArray(KEY_OVERVIEW)
-                cities.add(Cities(cityId, cityname, country))
+                val coord = jsonCities.getJSONObject(index).getJSONObject(KEY_OVERVIEW)
+
+                val longi = coord.getString("lon")
+                val lati = coord.getString("lat")
+
+                cities.add(Cities(cityId, cityname, country, longi, lati))
             }
         } catch (e: JSONException) {
             return cities

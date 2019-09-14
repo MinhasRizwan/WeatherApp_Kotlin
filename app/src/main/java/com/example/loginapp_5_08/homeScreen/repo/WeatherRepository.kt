@@ -25,6 +25,7 @@ class WeatherRepository : LifecycleOwner {
         }
     }
 
+    //Return CurrentWeather API response
     fun getCurrentWeather(): MutableLiveData<CurrentWeatherResponseOWM>{
         val currentData = MutableLiveData<CurrentWeatherResponseOWM>()
         openWeatherApiService.getCurrentWeather("London,uk").enqueue(object : Callback<CurrentWeatherResponseOWM> {
@@ -45,7 +46,7 @@ class WeatherRepository : LifecycleOwner {
         return currentData
     }
 
-
+    //Return FutureWeather API response
     fun getFutureWeather(city:String): MutableLiveData<FutureWeatherResponseOWM>{
         val futureData = MutableLiveData<FutureWeatherResponseOWM>()
         openWeatherApiService.getFutureWeather(city).enqueue(object : Callback<FutureWeatherResponseOWM> {
@@ -65,6 +66,8 @@ class WeatherRepository : LifecycleOwner {
         })
         return futureData
     }
+
+    //Return Weather API response (Searched By Location)
 
     fun getFutureWeatherByLocation(lati:Double, longi:Double): MutableLiveData<FutureWeatherResponseOWM>{
         val futureData = MutableLiveData<FutureWeatherResponseOWM>()

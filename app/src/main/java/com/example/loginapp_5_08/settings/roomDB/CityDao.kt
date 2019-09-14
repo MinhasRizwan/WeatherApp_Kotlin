@@ -21,5 +21,4 @@ interface CityDao {
     @Query("SELECT * FROM city_table WHERE name LIKE :cityName")
     fun findByCityName(cityName: String): LiveData<List<City>>
 
-
 }
