@@ -57,4 +57,12 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     }
 
 
+    //Function for current Location
+    fun connectGoogleApi(){
+        //repository.connectGoogleApiClient()
+    }
+
+    fun disconnectGoogleApi(){
+        //repository.disconnectGoogleApiClient()
+    }
 }

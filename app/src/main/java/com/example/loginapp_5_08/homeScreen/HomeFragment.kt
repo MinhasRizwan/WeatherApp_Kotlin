@@ -1,5 +1,8 @@
 package com.example.loginapp_5_08.homeScreen
 
+import android.content.Context
+import android.content.Intent
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +16,7 @@ import com.example.loginapp_5_08.homeScreen.openWeatherApi.response.future.Futur
 import kotlinx.android.synthetic.main.fragment_home_screen.*
 import com.example.loginapp_5_08.homeScreen.viewModels.WeatherViewModel
 import androidx.lifecycle.ViewModelProviders
+import com.example.loginapp_5_08.settings.SettingsActivity
 import com.example.loginapp_5_08.settings.roomDB.City
 import com.example.loginapp_5_08.shared.SharedPreference
 
@@ -29,29 +33,42 @@ class HomeFragment (private val city: City, private val sharedPreference: Shared
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        weatherViewModel = ViewModelProviders.of(this).get(WeatherViewModel::class.java)
-        weatherViewModel.init(city)
 
-        //Toast.makeText(activity,city, Toast.LENGTH_SHORT).show()
 
-        Toast.makeText(activity,city.name, Toast.LENGTH_SHORT).show()
-        futureWeatherObserver = Observer { newWeather ->
+        if (isInternetAvailable(this@HomeFragment.context!!)) {
+            //callAPIMethod();
+            weatherViewModel = ViewModelProviders.of(this).get(WeatherViewModel::class.java)
+            weatherViewModel.init(city)
 
-            //
-            val tempScale = sharedPreference.getValueInt("tempScale")
-            // Update the UI
-            futureWeatherResponseOWM = newWeather
-            recycler_view.adapter = CurrentStatusContentAdapter(getSampleRows(1) , futureWeatherResponseOWM, this@HomeFragment, tempScale)
-            recycler_view.layoutManager = LinearLayoutManager(this@HomeFragment.context)
+            //Toast.makeText(activity,city, Toast.LENGTH_SHORT).show()
+
+            Toast.makeText(activity,city.name, Toast.LENGTH_SHORT).show()
+            futureWeatherObserver = Observer { newWeather ->
+
+                //
+                val tempScale = sharedPreference.getValueInt("tempScale")
+                // Update the UI
+                futureWeatherResponseOWM = newWeather
+                recycler_view.adapter = CurrentStatusContentAdapter(getSampleRows(1) , futureWeatherResponseOWM, this@HomeFragment, tempScale)
+                recycler_view.layoutManager = LinearLayoutManager(this@HomeFragment.context)
+            }
+
+            weatherViewModel.getFutureWeatherRepository()!!.observe(this, futureWeatherObserver)
+
+
+        } else {
+            Toast.makeText(context, "No Internet Available", Toast.LENGTH_SHORT).show()
+
+            val intent = Intent(activity?.applicationContext, SettingsActivity::class.java)
+            startActivity(intent)
         }
-
-        weatherViewModel.getFutureWeatherRepository()!!.observe(this, futureWeatherObserver)
 
         // Inflate the layout for this fragment
         return inflater.inflate(
             R.layout.fragment_home_screen,
             container, false
         )
+
     }
 
     companion object{
@@ -77,5 +94,14 @@ class HomeFragment (private val city: City, private val sharedPreference: Shared
         }
         return rows
     }
+
+    fun isInternetAvailable(context: Context): Boolean {
+        val mConMgr = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+        return (mConMgr.activeNetworkInfo != null
+                && mConMgr.activeNetworkInfo!!.isAvailable
+                && mConMgr.activeNetworkInfo!!.isConnected)
+    }
+
 }
 

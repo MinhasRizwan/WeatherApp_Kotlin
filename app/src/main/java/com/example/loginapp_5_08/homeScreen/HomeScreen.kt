@@ -27,8 +27,12 @@ import com.google.android.gms.common.GoogleApiAvailability
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
 import com.example.loginapp_5_08.settings.roomDB.City
-import com.example.loginapp_5_08.settings.roomDB.CityViewModel
 import com.google.android.gms.location.LocationListener
+import android.content.Context.CONNECTIVITY_SERVICE
+import androidx.core.content.ContextCompat.getSystemService
+import android.net.ConnectivityManager
+import android.content.Context
+
 
 class HomeScreen : AppCompatActivity(), GoogleApiClient.ConnectionCallbacks,
 GoogleApiClient.OnConnectionFailedListener, LocationListener {
@@ -56,16 +60,12 @@ GoogleApiClient.OnConnectionFailedListener, LocationListener {
     // integer for permissions results request
     private val ALL_PERMISSIONS_RESULT = 1011
 
-    //
-    private lateinit var cityViewModel: CityViewModel
     private lateinit var cityObserver: Observer<List<City>>
+    private lateinit var currentLoc:City
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home_screen)
-
-        //
-        cityViewModel = ViewModelProviders.of(this).get(CityViewModel::class.java)
 
 
         //Current Location
@@ -91,7 +91,7 @@ GoogleApiClient.OnConnectionFailedListener, LocationListener {
         ///////////////////////////////////////////////////////////////////////////////////////////////
 
         //Initializing Shared Preference
-        sharedPreference = SharedPreference(this)
+        sharedPreference = SharedPreference(applicationContext)
 
         //View Model
         homeViewModel = ViewModelProviders.of(this).get(HomeViewModel::class.java)
@@ -106,19 +106,27 @@ GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
             sharedPreference.saveArrayList("addedCitiesList",citiesAdded)
             sharedPreference.save("firstStart",false)
+            sharedPreference.save("latitude", latitude.toString())
+            sharedPreference.save("longitude", longitude.toString())
+
         }
 
         //getCurrentLocationCheck
         val currentCityCheck = homeViewModel.getCurrentLocationCheck(sharedPreference)
 
         //getAddedCities
-        val cityAdded = homeViewModel.getAddedCities(sharedPreference)
+        val citiesAdded = homeViewModel.getAddedCities(sharedPreference)
 
         //addCurrentCity
-        val currentLoc = City(123, "Current", "Pk", longitude, latitude)
+        currentLoc = City(123, "Current", "Pk", longitude, latitude)
         //addCurrentCity
         if (currentCityCheck == true)
         {
+
+            currentLoc = City(123, "Current", "Pk", sharedPreference.getValueString("longitude")!!.toDouble(),
+                sharedPreference.getValueString("latitude")!!.toDouble()
+            )
+
             //cityAdded = homeViewModel.addCurrentCity()
             homeViewModel.insert(currentLoc)
         }
@@ -127,9 +135,9 @@ GoogleApiClient.OnConnectionFailedListener, LocationListener {
             homeViewModel.delete(currentLoc)
         }
 
-        cityAdded.reversed()
+        citiesAdded.reversed()
 
-        pagerAdapter = WeatherPagerAdapter(supportFragmentManager, cityAdded, sharedPreference)
+        pagerAdapter = WeatherPagerAdapter(supportFragmentManager, citiesAdded, sharedPreference)
         viewPager.adapter = pagerAdapter
         viewPager.currentItem = pagerAdapter.cities.size
 
@@ -148,12 +156,11 @@ GoogleApiClient.OnConnectionFailedListener, LocationListener {
             //pagerAdapter = WeatherPagerAdapter(supportFragmentManager, addedCity, latitude,longitude, sharedPreference)
             pagerAdapter = WeatherPagerAdapter(supportFragmentManager, citiesAdded, sharedPreference)
             viewPager.adapter = pagerAdapter
-            viewPager.currentItem = pagerAdapter.cities.size
+            viewPager.currentItem = 0
 
         }
 
         homeViewModel.allCities!!.observe(this, cityObserver)
-
 
         //Setting Tab with View Pager
         cityTabLayout.setupWithViewPager(viewPager)
@@ -164,23 +171,15 @@ GoogleApiClient.OnConnectionFailedListener, LocationListener {
     override fun onResume() {
         super.onResume()
 
-
-        ///////////////////////////////////////////////////////////////////////////////////////////////
-        if (!checkPlayServices()) {
-            //locationTv.setText("You need to install Google Play Services to use the App properly");
-        }
-
-        /////////////////////////////////////////////////////////////////////////////////
-        //getCurrentLocationCheck
         val currentCityCheck = homeViewModel.getCurrentLocationCheck(sharedPreference)
 
-        //getAddedCities
-        val cityAdded = homeViewModel.getAddedCities(sharedPreference)
-
-        val currentLoc = City(123, "Current", "Pk", longitude, latitude)
-        //addCurrentCity
         if (currentCityCheck == true)
         {
+
+            currentLoc = City(123, "Current", "Pk", sharedPreference.getValueString("longitude")!!.toDouble(),
+                sharedPreference.getValueString("latitude")!!.toDouble()
+            )
+
             //cityAdded = homeViewModel.addCurrentCity()
             homeViewModel.insert(currentLoc)
         }
@@ -189,37 +188,11 @@ GoogleApiClient.OnConnectionFailedListener, LocationListener {
             homeViewModel.delete(currentLoc)
         }
 
-        //setPagerAdapter
-        pagerAdapter = WeatherPagerAdapter(supportFragmentManager, cityAdded, sharedPreference)
-        viewPager.adapter = pagerAdapter
-
-
-        cityObserver = Observer { newCity ->
-
-            // Update the cached copy of the words in the adapter.
-            //    newCity?.let { adapter?.setCities(it) }
-            //    Toast.makeText(context, "Added", Toast.LENGTH_LONG).show()
-
-            // Update the UI
-            val citiesAdded = newCity as ArrayList
-
-            val addedCity = ArrayList<String>()
-
-            for (i in citiesAdded){
-                addedCity.add(i.name)
-            }
-
-            pagerAdapter = WeatherPagerAdapter(supportFragmentManager, citiesAdded, sharedPreference)
-            viewPager.adapter = pagerAdapter
-            viewPager.currentItem = pagerAdapter.cities.size- pagerAdapter.cities.size
-
-        }
-
         homeViewModel.allCities!!.observe(this, cityObserver)
-
-        viewPager.currentItem = pagerAdapter.cities.size - pagerAdapter.cities.size
+        //viewPager.currentItem = 0
 
         cityTabLayout.setupWithViewPager(viewPager)
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -264,6 +237,7 @@ GoogleApiClient.OnConnectionFailedListener, LocationListener {
     override fun onStart() {
         super.onStart()
 
+        //homeViewModel.connectGoogleApi()
         if (googleApiClient != null) {
             googleApiClient!!.connect()
         }
@@ -272,6 +246,7 @@ GoogleApiClient.OnConnectionFailedListener, LocationListener {
     override fun onPause() {
         super.onPause()
 
+        //homeViewModel.disconnectGoogleApi()
         // stop location updates
         if (googleApiClient != null && googleApiClient!!.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this)
@@ -312,6 +287,8 @@ GoogleApiClient.OnConnectionFailedListener, LocationListener {
             latitude = location!!.latitude
             longitude = location!!.longitude
 
+            sharedPreference.save("latitude", latitude.toString())
+            sharedPreference.save("longitude", longitude.toString())
           //locationTv.setText("Latitude : " + location.getLatitude() + "\nLongitude : " + location.getLongitude());
         }
 
@@ -347,6 +324,9 @@ GoogleApiClient.OnConnectionFailedListener, LocationListener {
         if (location != null) {
             latitude = location!!.latitude
             longitude = location!!.longitude
+
+            sharedPreference.save("latitude", latitude.toString())
+            sharedPreference.save("longitude", longitude.toString())
 
             //locationTv.setText("Latitude : " + location.getLatitude() + "\nLongitude : " + location.getLongitude());
         }
