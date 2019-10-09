@@ -6,7 +6,6 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.*
 import androidx.fragment.app.DialogFragment
-import androidx.lifecycle.ViewModelProviders
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,6 +16,7 @@ import kotlinx.android.synthetic.main.layout_addedcities_list.view.*
 import android.widget.*
 import android.widget.AdapterView.OnItemClickListener
 import android.widget.ArrayAdapter
+import androidx.lifecycle.ViewModelProvider
 import com.example.loginapp_5_08.R
 import io.reactivex.BackpressureStrategy
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -25,8 +25,6 @@ import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
-
-
 
 
 class ManageCityDialogFragment : AppCompatDialogFragment(){
@@ -38,7 +36,7 @@ class ManageCityDialogFragment : AppCompatDialogFragment(){
 
 
     private var content: String? = null
-    lateinit var  listAdapter : ArrayAdapter<String>
+    private lateinit var  listAdapter : ArrayAdapter<String>
 
 
      //View Model
@@ -51,18 +49,18 @@ class ManageCityDialogFragment : AppCompatDialogFragment(){
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setStyle(DialogFragment.STYLE_NO_TITLE, com.example.loginapp_5_08.R.style.DialogStyle)
+        setStyle(DialogFragment.STYLE_NO_TITLE, R.style.DialogStyle)
         content = arguments?.getString("content")
 
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(com.example.loginapp_5_08.R.layout.layout_manage_cities, container, false)
+        val view = inflater.inflate(R.layout.layout_manage_cities, container, false)
 
-        recyclerView = view?.findViewById<RecyclerView>(com.example.loginapp_5_08.R.id.recyclerviewAddedCities)!!
+        recyclerView = view?.findViewById(R.id.recyclerviewAddedCities)!!
         adapter = context?.let { CitiesListAdapter(it) }!!
 
-        cityViewModel = ViewModelProviders.of(this).get(CityViewModel::class.java)
+        cityViewModel = ViewModelProvider(this).get(CityViewModel::class.java)
 
         return view
     }
@@ -73,7 +71,7 @@ class ManageCityDialogFragment : AppCompatDialogFragment(){
         fun onItemLongClicked(position: Int, view: View)
     }
 
-    fun RecyclerView.addOnItemLongClickListener(onClickLongListener: OnItemLongClickListener) {
+    private fun RecyclerView.addOnItemLongClickListener(onClickLongListener: OnItemLongClickListener) {
         this.addOnChildAttachStateChangeListener(object : RecyclerView.OnChildAttachStateChangeListener {
             override fun onChildViewDetachedFromWindow(view: View) {
                 view.setOnLongClickListener(null)
@@ -93,7 +91,7 @@ class ManageCityDialogFragment : AppCompatDialogFragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val autoCompleteTextView = view.findViewById(com.example.loginapp_5_08.R.id.autoCompleteTextView1) as AutoCompleteTextView
+        val autoCompleteTextView = view.findViewById(R.id.autoCompleteTextView1) as AutoCompleteTextView
         autoCompleteTextView.setAdapter(this@ManageCityDialogFragment.context?.let { getCitiesAdapter(it) })
         autoCompleteTextView.setDropDownBackgroundResource(R.color.white)
 
@@ -123,7 +121,7 @@ class ManageCityDialogFragment : AppCompatDialogFragment(){
                 Toast.makeText(context,  view.textViewCity.text.toString() + "Deleted", Toast.LENGTH_SHORT).show()
 
                 for (i in cities) {
-                    if ((i.name).equals(view.textViewCity.text.toString())){
+                    if ((i.name) == view.textViewCity.text.toString()){
                         val city = City(i.id.toInt(), i.name, i.country, i.long.toDouble(), i.lat.toDouble() )
                         cityViewModel.delete(city)
                     }
@@ -134,22 +132,20 @@ class ManageCityDialogFragment : AppCompatDialogFragment(){
         //Click on any city to add it into the database
         //AutoCompleteTextView is used for filtering the cities according to the text entered
 
-        autoCompleteTextView.onItemClickListener = object : OnItemClickListener {
-            override fun onItemClick(arg0: AdapterView<*>, arg1: View, arg2: Int, arg3: Long) {
-                // TODO Auto-generated method stub
+        autoCompleteTextView.onItemClickListener =
+            OnItemClickListener { arg0, _, arg2, _ ->
                 Toast.makeText(context, arg0.getItemAtPosition(arg2) as CharSequence, Toast.LENGTH_LONG)
                     .show()
 
                 val item = arg0.getItemAtPosition(arg2).toString()
 
                 for (i in cities) {
-                    if ((i.name + " , " + i.country).equals(item)){
+                    if ((i.name + " , " + i.country) == item){
                         val city = City(i.id.toInt(), i.name, i.country, i.long.toDouble(), i.lat.toDouble() )
                         cityViewModel.insert(city)
                     }
                 }
             }
-        }
 
 
         //RxJava for better Implementation
@@ -214,7 +210,7 @@ class ManageCityDialogFragment : AppCompatDialogFragment(){
             city.add(i.name + " , " + i.country)
         }
 
-        return ArrayAdapter<String>(context, android.R.layout.simple_dropdown_item_1line, city)
+        return ArrayAdapter(context, android.R.layout.simple_dropdown_item_1line, city)
     }
 
 }

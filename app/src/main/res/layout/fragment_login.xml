@@ -131,7 +131,6 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintWidth_percent="0.7"
                         app:addTextChangedListener= "@{viewModel.passwordTextWatcher}"
-                        android:onClick="@{viewModel::onLoginClicked}"
 
                 />
 

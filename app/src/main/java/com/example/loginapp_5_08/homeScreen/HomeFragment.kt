@@ -10,12 +10,12 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.loginapp_5_08.R
 import com.example.loginapp_5_08.homeScreen.openWeatherApi.response.future.FutureWeatherResponseOWM
 import kotlinx.android.synthetic.main.fragment_home_screen.*
 import com.example.loginapp_5_08.homeScreen.viewModels.WeatherViewModel
-import androidx.lifecycle.ViewModelProviders
 import com.example.loginapp_5_08.settings.SettingsActivity
 import com.example.loginapp_5_08.settings.roomDB.City
 import com.example.loginapp_5_08.shared.SharedPreference
@@ -36,8 +36,8 @@ class HomeFragment (private val city: City, private val sharedPreference: Shared
 
 
         if (isInternetAvailable(this@HomeFragment.context!!)) {
-            //callAPIMethod();
-            weatherViewModel = ViewModelProviders.of(this).get(WeatherViewModel::class.java)
+
+            weatherViewModel = ViewModelProvider(this).get(WeatherViewModel::class.java)
             weatherViewModel.init(city)
 
             //Toast.makeText(activity,city, Toast.LENGTH_SHORT).show()
@@ -45,7 +45,6 @@ class HomeFragment (private val city: City, private val sharedPreference: Shared
             Toast.makeText(activity,city.name, Toast.LENGTH_SHORT).show()
             futureWeatherObserver = Observer { newWeather ->
 
-                //
                 val tempScale = sharedPreference.getValueInt("tempScale")
                 // Update the UI
                 futureWeatherResponseOWM = newWeather
@@ -77,9 +76,8 @@ class HomeFragment (private val city: City, private val sharedPreference: Shared
         fun newInstance( city:City, sharedPreference: SharedPreference): HomeFragment{
             //val args = Bundle()
             //args.putSerializable(inputData, input)
-            val frag = HomeFragment( city,sharedPreference)
             //frag.arguments = args
-            return frag
+            return HomeFragment( city,sharedPreference)
         }
     }
 
@@ -95,7 +93,8 @@ class HomeFragment (private val city: City, private val sharedPreference: Shared
         return rows
     }
 
-    fun isInternetAvailable(context: Context): Boolean {
+    @Suppress("DEPRECATION")
+    private fun isInternetAvailable(context: Context): Boolean {
         val mConMgr = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
         return (mConMgr.activeNetworkInfo != null

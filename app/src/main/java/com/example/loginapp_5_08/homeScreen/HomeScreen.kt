@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
-import androidx.lifecycle.ViewModelProviders
 import com.example.loginapp_5_08.R
 import com.example.loginapp_5_08.homeScreen.ViewPager.WeatherPagerAdapter
 import com.example.loginapp_5_08.settings.SettingsActivity
@@ -26,20 +25,34 @@ import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import com.example.loginapp_5_08.dagger.WeatherApplication
+import com.example.loginapp_5_08.dagger.di.components.MainActivityComponent
+import com.example.loginapp_5_08.dagger.di.modules.MainActivityContextModule
+import com.example.loginapp_5_08.dagger.di.qualifiers.ApplicationContext
+import com.example.loginapp_5_08.dagger2.WeatherApp
+import com.example.loginapp_5_08.dagger2.WeatherApplicationComponent
 import com.example.loginapp_5_08.settings.roomDB.City
 import com.google.android.gms.location.LocationListener
-import android.content.Context.CONNECTIVITY_SERVICE
-import androidx.core.content.ContextCompat.getSystemService
-import android.net.ConnectivityManager
-import android.content.Context
+import dagger.android.AndroidInjection
+import dagger.android.support.DaggerAppCompatActivity
+import javax.inject.Inject
 
-
+//class HomeScreen : DaggerAppCompatActivity(), GoogleApiClient.ConnectionCallbacks,
 class HomeScreen : AppCompatActivity(), GoogleApiClient.ConnectionCallbacks,
 GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
+    //var detailActivityComponent: WeatherApplicationComponent? = null
+    lateinit var mainActivityComponent: MainActivityComponent
+
+
     //Variables Declaration
     private lateinit var pagerAdapter: WeatherPagerAdapter
-    private lateinit var sharedPreference: SharedPreference
+
+    @Inject
+    @ApplicationContext
+    lateinit var sharedPreference: SharedPreference
+
     private lateinit var homeViewModel: HomeViewModel
     private var latitude:Double = 0.0
     private var longitude:Double = 0.0
@@ -64,9 +77,21 @@ GoogleApiClient.OnConnectionFailedListener, LocationListener {
     private lateinit var currentLoc:City
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        //AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home_screen)
 
+        //val applicationComponent = WeatherApp().weatherApplicationComponent
+        //detailActivityComponent = DaggerWeatherApplicationComponent.builder()
+        //    .build()
+
+        //detailActivityComponent!!.injectSharedPref(this)
+
+        val applicationComponent = WeatherApplication.get(this)
+        mainActivityComponent = DaggerMainActivityComponent.builder()
+            .mainActivityContextModule(MainActivityContextModule(this))
+            .applicationComponent(applicationComponent)
+            .build()
 
         //Current Location
         permissions.add(Manifest.permission.ACCESS_FINE_LOCATION)
@@ -91,10 +116,10 @@ GoogleApiClient.OnConnectionFailedListener, LocationListener {
         ///////////////////////////////////////////////////////////////////////////////////////////////
 
         //Initializing Shared Preference
-        sharedPreference = SharedPreference(applicationContext)
+        sharedPreference = SharedPreference(this)
 
         //View Model
-        homeViewModel = ViewModelProviders.of(this).get(HomeViewModel::class.java)
+        homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
         //homeViewModel.init(sharedPreference)
 
         val firstStart = sharedPreference.getValueBoolean("firstStart", true)
@@ -120,7 +145,7 @@ GoogleApiClient.OnConnectionFailedListener, LocationListener {
         //addCurrentCity
         currentLoc = City(123, "Current", "Pk", longitude, latitude)
         //addCurrentCity
-        if (currentCityCheck == true)
+        if (currentCityCheck)
         {
 
             currentLoc = City(123, "Current", "Pk", sharedPreference.getValueString("longitude")!!.toDouble(),
@@ -131,7 +156,7 @@ GoogleApiClient.OnConnectionFailedListener, LocationListener {
             homeViewModel.insert(currentLoc)
         }
 
-        else if (currentCityCheck == false){
+        else if (!currentCityCheck){
             homeViewModel.delete(currentLoc)
         }
 
@@ -145,16 +170,15 @@ GoogleApiClient.OnConnectionFailedListener, LocationListener {
         //setPagerAdapter with viewPager
         cityObserver = Observer { newCity ->
             // Update the UI
-            val citiesAdded = newCity as ArrayList
+            val citiesadded = newCity as ArrayList
 
             val addedCity = ArrayList<String>()
 
-            for (i in citiesAdded){
+            for (i in citiesadded){
                 addedCity.add(i.name)
             }
 
-            //pagerAdapter = WeatherPagerAdapter(supportFragmentManager, addedCity, latitude,longitude, sharedPreference)
-            pagerAdapter = WeatherPagerAdapter(supportFragmentManager, citiesAdded, sharedPreference)
+            pagerAdapter = WeatherPagerAdapter(supportFragmentManager, citiesadded, sharedPreference)
             viewPager.adapter = pagerAdapter
             viewPager.currentItem = 0
 
@@ -173,7 +197,7 @@ GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
         val currentCityCheck = homeViewModel.getCurrentLocationCheck(sharedPreference)
 
-        if (currentCityCheck == true)
+        if (currentCityCheck)
         {
 
             currentLoc = City(123, "Current", "Pk", sharedPreference.getValueString("longitude")!!.toDouble(),
@@ -184,7 +208,7 @@ GoogleApiClient.OnConnectionFailedListener, LocationListener {
             homeViewModel.insert(currentLoc)
         }
 
-        else if (currentCityCheck == false){
+        else if (!currentCityCheck){
             homeViewModel.delete(currentLoc)
         }
 
@@ -248,7 +272,8 @@ GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
         //homeViewModel.disconnectGoogleApi()
         // stop location updates
-        if (googleApiClient != null && googleApiClient!!.isConnected()) {
+        if (googleApiClient != null && googleApiClient!!.isConnected) {
+            @Suppress("DEPRECATION")
             LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this)
             googleApiClient!!.disconnect()
         }
@@ -281,6 +306,7 @@ GoogleApiClient.OnConnectionFailedListener, LocationListener {
         }
 
         // Permissions ok, we get last location
+        @Suppress("DEPRECATION")
         location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient)
 
         if (location != null) {
@@ -295,11 +321,12 @@ GoogleApiClient.OnConnectionFailedListener, LocationListener {
         startLocationUpdates()
     }
 
+    @Suppress("DEPRECATION")
     private fun startLocationUpdates() {
         locationRequest = LocationRequest()
-        locationRequest!!.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-        locationRequest!!.setInterval(UPDATE_INTERVAL)
-        locationRequest!!.setFastestInterval(FASTEST_INTERVAL)
+        locationRequest!!.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        locationRequest!!.interval = UPDATE_INTERVAL
+        locationRequest!!.fastestInterval = FASTEST_INTERVAL
 
         if (ActivityCompat.checkSelfPermission(this,
 	          Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED

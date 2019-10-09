@@ -1,4 +1,4 @@
-package com.example.loginapp_5_08.settings.vewModel
+package com.example.loginapp_5_08.settings
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,8 +10,6 @@ import com.example.loginapp_5_08.settings.manageCities.ManageCityDialogFragment
 import com.example.loginapp_5_08.shared.SharedPreference
 import kotlinx.android.synthetic.main.fragment_setting_screen.*
 import android.widget.*
-import com.example.loginapp_5_08.homeScreen.HomeFragment
-import com.example.loginapp_5_08.settings.roomDB.City
 
 
 class SettingsFragment : Fragment(), View.OnClickListener {
@@ -43,10 +41,10 @@ class SettingsFragment : Fragment(), View.OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        toolbar.setTitle("Settings")
+        toolbar.title = "Settings"
         val tempScaleSpinner = setAdapter()
 
-        val b = view.findViewById(com.example.loginapp_5_08.R.id.buttonManage) as Button
+        val b = view.findViewById(R.id.buttonManage) as Button
         b.setOnClickListener(this)
 
         dropdownScale.setSelection(tempUnit)
@@ -63,22 +61,14 @@ class SettingsFragment : Fragment(), View.OnClickListener {
             }
         }
 
-        checkedTextView.setOnClickListener(object: View.OnClickListener {
+        checkedTextView.setOnClickListener {
+            if(checkedTextView.isChecked){
+                sharedPreference.save("currentLocation",true)
 
-            override fun onClick(v:View) {
-
-
-                if(checkedTextView.isChecked()){
-                    sharedPreference.save("currentLocation",true)
-
-                }
-
-                else {
-                    sharedPreference.save("currentLocation", false)
-                }
-
+            } else {
+                sharedPreference.save("currentLocation", false)
             }
-        })
+        }
 
     }
 
@@ -107,7 +97,7 @@ class SettingsFragment : Fragment(), View.OnClickListener {
     }
 
     override fun onClick(p0: View?) {
-        val ft = activity?.getSupportFragmentManager()?.beginTransaction()
+        val ft = activity?.supportFragmentManager?.beginTransaction()
         val newFragment = ManageCityDialogFragment.newInstance("pass content" )
         if (ft != null) {
             newFragment.show(ft, "dialog")
@@ -119,9 +109,8 @@ class SettingsFragment : Fragment(), View.OnClickListener {
         fun newInstance(): SettingsFragment {
             //val args = Bundle()
             //args.putSerializable(inputData, input)
-            val frag = SettingsFragment( )
             //frag.arguments = args
-            return frag
+            return SettingsFragment()
         }
     }
 
